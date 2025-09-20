@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f0f2f5; /* Un gris muy claro y suave */
+  color: #1a202c; /* Un color de texto oscuro */
+}
+
+/* Clases personalizadas para tipografía */
+@layer components {
+  .title-magazine {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    font-weight: 600 ; /* semibold */
+    font-size: 18px;
+    color: #000000;
+    font-stretch: condensed;
+    /* text-transform: uppercase; */
+  }
+  .title-buttons {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400; /* regular */
+    font-size: 14px;
+    color: #ffffff; /* #000000 con 90% de opacidad */
+    line-height: 1.5; /* Para mejor legibilidad */
+  }
+  
+  .paragraph-magazine {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400; /* regular */
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7); /* #000000 con 80% de opacidad */
+    line-height: 1.5; /* Para mejor legibilidad */
+  }
+  .title-header {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400; /* regular */
+    font-size: 15px;
+    color: #ffffff; /* #000000 con 90% de opacidad */
+    line-height: 1.6; /* Para mejor legibilidad */
+  }
+  .gradient-header {
+    background: linear-gradient(to right, #132F56 0%, #2A67BC 100%);
+  }
+
+  .button-gradient {
+    background: linear-gradient(to right, #132F56 0%, #2A67BC 100%);
+  }
+}
+
+/* Estilos personalizados para Swiper */
+.swiper-pagination-custom .swiper-pagination-bullet {
+  @apply w-3 h-3 bg-slate-300 rounded-full transition-all duration-300 cursor-pointer;
+}
+
+.swiper-pagination-custom .swiper-pagination-bullet-active {
+  @apply bg-blue-600 scale-125;
+}
+
+.swiper-pagination-custom .swiper-pagination-bullet:hover {
+  @apply bg-slate-400;
+}
+
+/* Ocultar los botones por defecto de Swiper */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+/* Utilidad para truncar texto */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

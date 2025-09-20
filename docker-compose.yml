@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  react-app:
+    build: .
+    container_name: react-tailwind-container
+    ports:
+      - "5173:5173"   # Usamos el puerto del dev server
+    volumes:
+      - .:/app        # Monta tu código en el contenedor
+      - /app/node_modules  # Evita sobrescribir node_modules
+    command: npm run dev
