@@ -313,8 +313,8 @@ export const BlogCommentsList: React.FC<BlogCommentsListProps> = ({ blogId }) =>
           <p className="text-sm text-gray-500">Sé el primero en comentar este blog</p>
         </div>
 
-        {/* Formulario para comentarios principales */}
-        <div className="mt-6">
+        {/* Formulario para comentarios principales - OCULTO */}
+        <div className="mt-6 hidden">
           <CommentForm
             blogId={blogId}
             parentId={null}
@@ -327,7 +327,7 @@ export const BlogCommentsList: React.FC<BlogCommentsListProps> = ({ blogId }) =>
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
+    <div className="bg-white rounded-lg shadow-sm p-2 mt-8">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center">
           <svg className="w-5 h-5 mr-2 text-azul-codea" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -338,21 +338,18 @@ export const BlogCommentsList: React.FC<BlogCommentsListProps> = ({ blogId }) =>
             {flattenComments(comments).length}
           </span>
         </h3>
+        
+      </div>
 
-        {/* Botón Like del Blog */}
-        <button
-          onClick={handleToggleLike}
-          disabled={isLikingBlog}
-          className={`flex items-center space-x-2 hover:scale-110 transition ${
-            isBlogLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'
-          } ${isLikingBlog ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          {isBlogLiked ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
-          <span>{isBlogLiked ? "Te gusta" : "Me gusta"}</span>
-          {likesCount > 0 && (
-            <span className="ml-1 font-medium text-sm">({likesCount})</span>
-          )}
-        </button>
+      {/* Formulario para nuevos comentarios principales */}
+      <div className="mb-6 pt-6 border-t border-gray-200">
+        <h4 className="text-lg font-medium text-gray-900 mb-4">Agregar comentario</h4>
+        <CommentForm
+          blogId={blogId}
+          parentId={null}
+          onCommentAdded={() => handleCommentAdded()}
+          placeholder="Escribe tu comentario..."
+        />
       </div>
 
       <div className="space-y-6">
@@ -746,8 +743,6 @@ export const BlogCommentsList: React.FC<BlogCommentsListProps> = ({ blogId }) =>
           </button>
         </div>
       )}
-
-      
     </div>
   );
 };

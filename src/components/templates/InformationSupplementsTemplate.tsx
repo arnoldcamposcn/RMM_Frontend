@@ -3,7 +3,6 @@ import BannerSection from '../molecules/BannerSection';
 import ContentSection from '../molecules/ContentSection';
 import RelatedArticles from '../../store/features/blog/RelatedArticles';
 import GridBlogs from '../../store/features/blog/gridBlogs';
-import { CommentForm } from '../organisms/CommentForm';
 import { BlogCommentsList } from '../organisms/CommentsList';
 import { useFetch } from '../../hooks/useFetch';
 import { getBlog } from '../../services/blog/blog.service';
@@ -63,7 +62,6 @@ const InformationSupplementsTemplate: React.FC<InformationSupplementsTemplatePro
             content={content}
             sharePlatforms={sharePlatforms}
           />
-          <CommentForm blogId={id} />
           <BlogCommentsList blogId={id} />
         </div>
         
