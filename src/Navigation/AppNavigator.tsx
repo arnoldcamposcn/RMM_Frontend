@@ -15,6 +15,7 @@ import InformationBlogs from "../components/pages/InformationBlogs";
 import { EditionContainer } from "../components/pages/EditionContainer";
 import ProfilePage from "../components/pages/profile";
 import EditProfilePage from "../components/pages/editProfile";
+import { ForoPage } from "../components/pages/foro";
 
 
 const AppNavigator = () => {
@@ -29,6 +30,7 @@ const AppNavigator = () => {
           <Route path="/articulos/:id" element={<InformationArticles />} />
           <Route path="/blogs" element={<BlogsPage />} />
           <Route path="/blogs/:id" element={<InformationBlogs />} />
+          <Route path="/foro" element={<ForoPage />} />
 
           <Route path="/suplemento-semanal" element={<SupplementsPage />} />
           <Route path="/ediciones" element={<EditionContainer />} />

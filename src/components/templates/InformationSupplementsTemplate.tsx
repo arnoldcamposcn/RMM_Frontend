@@ -3,7 +3,7 @@ import BannerSection from '../molecules/BannerSection';
 import ContentSection from '../molecules/ContentSection';
 import RelatedArticles from '../../store/features/blog/RelatedArticles';
 import GridBlogs from '../../store/features/blog/gridBlogs';
-import { BlogCommentsList } from '../organisms/CommentsList';
+import { CommentsTemplate, ArticleCommentsTemplate } from '../comments';
 import { useFetch } from '../../hooks/useFetch';
 import { getBlog } from '../../services/blog/blog.service';
 import type { Blog } from '../../schema/blog/blog';
@@ -23,6 +23,10 @@ interface InformationSupplementsTemplateProps {
 /**
  * Template para página de Información de Suplementos
  * Estructura: Banner superior + 2 columnas (contenido + complementos)
+ * 
+ * Renderiza condicionalmente el sistema de comentarios según el tipo de contenido:
+ * - Blogs: CommentsTemplate
+ * - Artículos: ArticleCommentsTemplate
  */
 const InformationSupplementsTemplate: React.FC<InformationSupplementsTemplateProps> = ({
   pageTitle,
@@ -56,13 +60,21 @@ const InformationSupplementsTemplate: React.FC<InformationSupplementsTemplatePro
           <ContentSection
             blogId={id}
             blogData={blogData || undefined}
+            contentType={contentType}
             formattedDate={formattedDate}
             month={month}
             year={year}
             content={content}
             sharePlatforms={sharePlatforms}
           />
-          <BlogCommentsList blogId={id} />
+          {/* Sistema de comentarios condicional según el tipo de contenido */}
+          {contentType === 'blog' && (
+            <CommentsTemplate blogId={id} />
+          )}
+          {contentType === 'article' && (
+            <ArticleCommentsTemplate articleId={id} />
+          )}
+          
         </div>
         
         {/* Columna 2: Relacionados */}

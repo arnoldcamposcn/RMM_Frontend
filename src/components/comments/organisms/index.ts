@@ -1,0 +1,9 @@
+export { CommentForm } from './CommentForm';
+export { ArticleCommentForm } from './ArticleCommentForm';
+export { SingleComment } from './SingleComment';
+export { ReplyForm } from './ReplyForm';
+export { ArticleReplyForm } from './ArticleReplyForm';
+export { CommentThread } from './CommentThread';
+export { ArticleCommentThread } from './ArticleCommentThread';
+export { ForoCommentThread } from './ForoCommentThread';
+export { ForoCommentForm } from './ForoCommentForm';

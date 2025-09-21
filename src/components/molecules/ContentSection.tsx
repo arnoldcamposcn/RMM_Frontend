@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import DateDisplay from "../atoms/DateDisplay";
 import ShareIcons from "../atoms/ShareIcons";
 import { toggleLike, getBlogLikes } from "../../services/blog/blog.service";
+import { toggleArticleLike, getArticleLikes } from "../../services/articles/article-likes.service";
 import { FaHeart, FaRegHeart } from "react-icons/fa"; // Corazón lleno/vacío
 import type { Blog } from "../../schema/blog/blog";
 
 interface ContentSectionProps {
-  blogId: number; // 🔹 Necesitamos el id del blog
+  blogId: number; // 🔹 ID del blog o artículo
   blogData?: Blog; // 🔹 Datos del blog incluyendo likes
+  contentType?: 'blog' | 'article'; // 🔹 Tipo de contenido
   formattedDate?: string;
   month?: string;
   year?: number;
@@ -19,6 +21,7 @@ interface ContentSectionProps {
 const ContentSection: React.FC<ContentSectionProps> = ({
   blogId,
   blogData,
+  contentType = 'blog', // Por defecto es blog para mantener compatibilidad
   formattedDate,
   month,
   year,
@@ -30,37 +33,48 @@ const ContentSection: React.FC<ContentSectionProps> = ({
   const [likesCount, setLikesCount] = useState(0); // 🔹 Contador de likes
   const [isLoading, setIsLoading] = useState(false); // 🔹 Estado de carga
 
-  // Cargar información de likes del blog al montar el componente
+  // Cargar información de likes según el tipo de contenido
   useEffect(() => {
-    const fetchBlogLikes = async () => {
+    const fetchLikes = async () => {
       try {
-        const likesData = await getBlogLikes(blogId);
-        setIsLiked(likesData.user_liked);
-        setLikesCount(likesData.total_likes);
+        if (contentType === 'article') {
+          const likesData = await getArticleLikes(blogId);
+          setIsLiked(likesData.user_liked);
+          setLikesCount(likesData.total_likes);
+        } else {
+          // Por defecto es blog
+          const likesData = await getBlogLikes(blogId);
+          setIsLiked(likesData.user_liked);
+          setLikesCount(likesData.total_likes);
+        }
       } catch (error) {
-        console.error("Error al cargar likes del blog:", error);
-        // Fallback a datos del blog si están disponibles
-        if (blogData) {
+        console.error(`Error al cargar likes del ${contentType}:`, error);
+        // Fallback a datos del blog si están disponibles (solo para blogs)
+        if (blogData && contentType === 'blog') {
           setIsLiked(blogData.is_liked || false);
           setLikesCount(blogData.likes_count || 0);
         }
       }
     };
 
-    fetchBlogLikes();
-  }, [blogId, blogData]);
+    fetchLikes();
+  }, [blogId, blogData, contentType]);
 
   const handleLike = async () => {
     if (isLoading) return; // Evitar múltiples clicks
     
     setIsLoading(true);
     try {
-      await toggleLike(blogId); // Llama al servicio
+      if (contentType === 'article') {
+        await toggleArticleLike(blogId); // Llama al servicio de artículos
+      } else {
+        await toggleLike(blogId); // Llama al servicio de blogs
+      }
       // Actualizar estado local inmediatamente para feedback visual
       setIsLiked(!isLiked);
       setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
     } catch (error) {
-      console.error("Error al hacer toggle del like:", error);
+      console.error(`Error al hacer toggle del like del ${contentType}:`, error);
       // Revertir cambios en caso de error
       setIsLiked(isLiked);
       setLikesCount(likesCount);

@@ -17,7 +17,54 @@ export const ArticleApiResponseSchema = z.object({
     results: z.array(ArticleSchema),
 });
 
+// Schemas para comentarios de artículos
+export const ArticleCommentAuthorSchema = z.object({
+    id: z.number(),
+    email: z.string(),
+    usuario_unico: z.string(),
+});
+
+export const ArticlePostCommentSchema: z.ZodType<any> = z.object({
+    id: z.number(),
+    contenido: z.string(),
+    creado_en: z.string(),
+    autor: ArticleCommentAuthorSchema,
+    articulo: z.number(),
+    parent: z.number().nullable(),
+    respuestas: z.array(z.lazy((): z.ZodType<any> => ArticlePostCommentSchema)).optional(),
+});
+
+export const ArticleCreateCommentSchema = z.object({
+    articulo: z.number(),
+    contenido: z.string(),
+    parent: z.number().nullable().optional(),
+});
+
+export const ArticleUpdateCommentSchema = z.object({
+    id: z.number(),
+    contenido: z.string(),
+    creado_en: z.string(),
+    autor: ArticleCommentAuthorSchema,
+});
+
+// Schema para likes de artículos
+export const ArticleLikesSchema = z.object({
+    user_liked: z.boolean(),
+    total_likes: z.number(),
+});
+
+// Schema para respuesta paginada de comentarios de artículos
+export const ArticleCommentsApiResponseSchema = z.object({
+    count: z.number(),
+    next: z.string().nullable(),
+    previous: z.string().nullable(),
+    results: z.array(ArticlePostCommentSchema),
+});
+
 export type Article = z.infer<typeof ArticleSchema>;
 export type ArticleApiResponse = z.infer<typeof ArticleApiResponseSchema>;
-
- 
+export type ArticlePostComment = z.infer<typeof ArticlePostCommentSchema>;
+export type ArticleCreateComment = z.infer<typeof ArticleCreateCommentSchema>;
+export type ArticleUpdateComment = z.infer<typeof ArticleUpdateCommentSchema>;
+export type ArticleLikes = z.infer<typeof ArticleLikesSchema>;
+export type ArticleCommentsApiResponse = z.infer<typeof ArticleCommentsApiResponseSchema>;
