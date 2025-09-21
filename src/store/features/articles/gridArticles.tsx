@@ -25,7 +25,7 @@ const gridArticles: React.FC = () => {
           key={article.id}
           id={article.id}
           title={article.titulo_articulo}
-          image={article.imagen}
+          image={article.imagen_principal}
           items={[]} // Array vacío ya que este EditionCard no usa items
           onViewMore={() => handleArticleClick(article.id)}
         />

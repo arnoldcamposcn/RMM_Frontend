@@ -8,15 +8,27 @@ export function useFetch<T>(fetchFn: () => Promise<T>, deps: any[] = []) {
 
   const memoizedFetchFn = useCallback(fetchFn, deps);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(false);
     
-    memoizedFetchFn()
-      .then((res) => setData(res))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
+    try {
+      const result = await memoizedFetchFn();
+      setData(result);
+    } catch (err) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [memoizedFetchFn]);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const refetch = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch };
 }

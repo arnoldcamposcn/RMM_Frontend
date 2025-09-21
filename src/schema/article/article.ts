@@ -4,7 +4,8 @@ export const ArticleSchema = z.object({
     id: z.number(),
     titulo_articulo: z.string(),
     contenido: z.string(),
-    imagen: z.string(),
+    imagen_principal: z.string(),
+    banner: z.string(),
     fecha_publicacion: z.string(),
 });
 

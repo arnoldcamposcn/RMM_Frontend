@@ -15,9 +15,6 @@ const InformationBlogs = () => {
     [blogId] 
   );
 
-  const handleViewEdition = (id: number) => {
-    console.log('Ver blog relacionado:', id);
-  };
 
   if (loading) return <div className="p-4 text-center">⏳ Cargando blog...</div>;
   if (error) return <div className="p-4 text-center text-red-500">❌ Error al cargar el blog</div>;
@@ -26,7 +23,7 @@ const InformationBlogs = () => {
   // Configurar los datos para el template
   const pageData = {
     pageTitle: blog.titulo_blog,
-    bannerImage: blog.imagen,
+    bannerImage: blog.banner,
     
     // Información del blog - formato dd/mm/yyyy
     formattedDate: new Date(blog.fecha_publicacion).toLocaleDateString('es-ES', {
@@ -68,8 +65,8 @@ const InformationBlogs = () => {
       formattedDate={pageData.formattedDate}
       content={pageData.content}
       sharePlatforms={['facebook', 'linkedin', 'instagram']}
-      weeklyEditions={pageData.weeklyEditions}
-      onViewEdition={handleViewEdition}
+      id={blogId}
+      contentType="blog"
     />
   );
 };

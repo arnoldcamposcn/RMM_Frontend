@@ -21,7 +21,7 @@ const ArticleCarouselContainer: React.FC = () => {
     id: article.id,
     title: article.titulo_articulo,
     description: cleanRichText(article.contenido),
-    image: article.imagen,
+    image: article.imagen_principal,
   }));
 
   const handleArticleClick = (item: CardData) => {

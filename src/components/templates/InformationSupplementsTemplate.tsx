@@ -1,33 +1,29 @@
 import React from 'react';
-// import { useLocation } from 'react-router-dom';
 import BannerSection from '../molecules/BannerSection';
 import ContentSection from '../molecules/ContentSection';
-import EditionCard from '../molecules/EditionCard';
-// import Title from '../atoms/Title';
-
-interface WeeklyEditionData {
-  id: number;
-  image: string;
-  title: string;
-}
+import RelatedArticles from '../../store/features/blog/RelatedArticles';
+import GridBlogs from '../../store/features/blog/gridBlogs';
+import { CommentForm } from '../organisms/CommentForm';
+import { BlogCommentsList } from '../organisms/CommentsList';
+import { useFetch } from '../../hooks/useFetch';
+import { getBlog } from '../../services/blog/blog.service';
+import type { Blog } from '../../schema/blog/blog';
 
 interface InformationSupplementsTemplateProps {
   pageTitle: string;
   bannerImage: string;
   formattedDate?: string; 
-  month?: string;         // Compatibilidad: "septiembre"
-  year?: number;          // Compatibilidad: 2025
+  month?: string;         
+  year?: number;          
   content: string[];
   sharePlatforms?: ('facebook' | 'linkedin' | 'instagram')[];
-  
-  // Columna 2: Ediciones semanales
-  weeklyEditions: WeeklyEditionData[];
-  onViewEdition?: (id: number) => void;
+  id: number;             // Para artículos relacionados
+  contentType: 'blog' | 'article'; // Tipo de contenido para mostrar el componente correcto
 }
 
 /**
  * Template para página de Información de Suplementos
- * Estructura: Banner superior + 2 columnas (contenido + ediciones semanales)
+ * Estructura: Banner superior + 2 columnas (contenido + complementos)
  */
 const InformationSupplementsTemplate: React.FC<InformationSupplementsTemplateProps> = ({
   pageTitle,
@@ -37,18 +33,14 @@ const InformationSupplementsTemplate: React.FC<InformationSupplementsTemplatePro
   year,
   content,
   sharePlatforms = ['facebook', 'linkedin', 'instagram'],
-  weeklyEditions,
-  onViewEdition,
+  id,
+  contentType,
 }) => {
-  // const location = useLocation();
-  // // Detectar si estamos en una página de artículos o blogs
-  // const isArticlePage = location.pathname.includes('/articulos/');
-  // const isBlogPage = location.pathname.includes('/blogs/');
-  
-  // // Título dinámico basado en la ruta
-  // const relatedTitle = isArticlePage ? 'Artículos relacionados' : 
-  //                     isBlogPage ? 'Blogs relacionados' : 
-  //                     'Contenido relacionado';
+  // Obtener datos del blog para likes (solo si es un blog)
+  const { data: blogData } = useFetch<Blog>(
+    () => contentType === 'blog' ? getBlog(id) : Promise.resolve({} as Blog),
+    [id, contentType]
+  );
   return (
     <div>
       {/* Sección superior: Título y Banner */}
@@ -63,36 +55,23 @@ const InformationSupplementsTemplate: React.FC<InformationSupplementsTemplatePro
         {/* Columna 1: Fecha, compartir y contenido */}
         <div className="lg:col-span-2">
           <ContentSection
+            blogId={id}
+            blogData={blogData || undefined}
             formattedDate={formattedDate}
             month={month}
             year={year}
             content={content}
             sharePlatforms={sharePlatforms}
           />
+          <CommentForm blogId={id} />
+          <BlogCommentsList blogId={id} />
         </div>
         
-        {/* Columna 2: Ediciones semanales */}
-        <div className="lg:col-span-1">
-          {/* <div className="mb-6">
-            <Title className="text-xl">{relatedTitle}</Title>
-          </div>
-           */}
-          {/* Contenedor flex vertical para las cards */}
-          <div className="flex flex-col space-y-4">
-            {weeklyEditions.map((edition) => (
-              <EditionCard
-                key={edition.id}
-                id={edition.id}
-                image={edition.image}
-                title={edition.title}
-                items={[]} // Array vacío ya que este EditionCard no usa items
-                onViewMore={() => onViewEdition?.(edition.id)}
-              />
-            ))}
-          </div>
-          
-        
-        </div>
+        {/* Columna 2: Relacionados */}
+        <aside className="lg:col-span-1 flex flex-col space-y-8">
+          {contentType === 'blog' && <RelatedArticles id={id} />}
+          {contentType === 'article' && <GridBlogs />}
+        </aside>
         
       </div>
     </div>

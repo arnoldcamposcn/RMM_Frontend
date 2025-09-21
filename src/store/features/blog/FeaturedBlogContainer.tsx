@@ -19,7 +19,7 @@ const FeaturedBlogContainer: React.FC = () => {
     id: blog.id,
     title: blog.titulo_blog,
     description: cleanRichText(blog.contenido),
-    image: blog.imagen,
+    image: blog.imagen_principal,
   }));
 
   const handleBlogClick = (id: number) => {
