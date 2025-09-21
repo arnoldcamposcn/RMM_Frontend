@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useForo } from '../comments/hooks/useForo';
 import { useForoCategorias } from '../comments/hooks/useForoCategorias';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { ForoForm } from '../organisms/ForoForm';
+import { ForoEditForm } from '../organisms/ForoEditForm';
 import { ForoCard } from '../molecules/ForoCard';
 import { ForoCommentsTemplate } from '../comments/templates/ForoCommentsTemplate';
 import { LoadingSpinner } from '../comments/atoms/LoadingSpinner';
@@ -16,6 +18,8 @@ export const ForoPage = () => {
     error,
     likes,
     createNewForo,
+    updateForo,
+    removeForo,
     loadForoById,
     toggleForoLikes,
     setSelectedForo
@@ -27,24 +31,107 @@ export const ForoPage = () => {
     error: categoriasError
   } = useForoCategorias();
 
+  const {
+    loading: userLoading,
+    isOwner
+  } = useCurrentUser();
+
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingForoId, setEditingForoId] = useState<number | null>(null);
   const [selectedForoId, setSelectedForoId] = useState<number | null>(null);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<{
+    show: boolean;
+    type: 'create' | 'edit' | 'delete';
+  }>({ show: false, type: 'create' });
 
   const handleCreateForo = async (foroData: any) => {
     try {
       await createNewForo(foroData);
       // Ocultar el formulario después de crear exitosamente
       setShowCreateForm(false);
-      // Mostrar mensaje de éxito
-      setShowSuccessMessage(true);
+      // Mostrar mensaje de éxito específico para crear
+      setSuccessMessage({ show: true, type: 'create' });
       // Ocultar mensaje después de 3 segundos
-      setTimeout(() => setShowSuccessMessage(false), 3000);
+      setTimeout(() => setSuccessMessage({ show: false, type: 'create' }), 3000);
     } catch (error) {
       console.error('Error creating foro:', error);
       // Mantener el formulario abierto si hay error para que el usuario pueda intentar de nuevo
     }
   };
+
+  const handleEditForo = (foroId: number) => {
+    setEditingForoId(foroId);
+    setShowCreateForm(false); // Ocultar formulario de creación si está abierto
+  };
+
+  const handleSaveEdit = async (foroId: number, foroData: any) => {
+    try {
+      console.log('Saving edit for foro:', foroId, 'with data:', foroData);
+      await updateForo(foroId, foroData);
+      console.log('Edit saved successfully');
+      setEditingForoId(null);
+      // Mostrar mensaje de éxito específico para editar
+      setSuccessMessage({ show: true, type: 'edit' });
+      setTimeout(() => setSuccessMessage({ show: false, type: 'edit' }), 3000);
+    } catch (error) {
+      console.error('Error updating foro:', error);
+      // No mostramos error aquí porque el hook ya maneja los errores
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingForoId(null);
+  };
+
+  const handleDeleteForo = async (foroId: number) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este tema? Esta acción no se puede deshacer.')) {
+      try {
+        console.log('Deleting foro:', foroId);
+        await removeForo(foroId);
+        console.log('Foro deleted successfully');
+        
+        // Limpiar el estado de edición si se estaba editando el foro eliminado
+        if (editingForoId === foroId) {
+          setEditingForoId(null);
+        }
+        
+        // Mostrar mensaje de éxito específico para eliminar
+        setSuccessMessage({ show: true, type: 'delete' });
+        setTimeout(() => setSuccessMessage({ show: false, type: 'delete' }), 3000);
+      } catch (error) {
+        console.error('Error deleting foro:', error);
+      }
+    }
+  };
+
+  // Función helper para obtener mensajes de éxito específicos
+  const getSuccessMessage = (type: 'create' | 'edit' | 'delete') => {
+    switch (type) {
+      case 'create':
+        return {
+          title: '¡Tema creado exitosamente!',
+          description: 'Tu tema ha sido agregado al foro.'
+        };
+      case 'edit':
+        return {
+          title: '¡Tema actualizado exitosamente!',
+          description: 'Los cambios han sido guardados correctamente.'
+        };
+      case 'delete':
+        return {
+          title: '¡Tema eliminado con éxito!',
+          description: 'El tema ha sido eliminado del foro.'
+        };
+      default:
+        return {
+          title: '¡Operación exitosa!',
+          description: 'La acción se ha completado correctamente.'
+        };
+    }
+  };
+
+  // Usar el hook para verificar si el usuario actual es propietario
+  // const isCurrentUserOwner = isOwner; // Ya está disponible desde useCurrentUser
 
   const handleViewComments = async (foroId: number) => {
     setSelectedForoId(foroId);
@@ -146,29 +233,34 @@ export const ForoPage = () => {
           </p>
         </div>
         
-        <Button
-          onClick={() => setShowCreateForm(true)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          + Nuevo Tema
-        </Button>
+        {!showCreateForm && !editingForoId && (
+          <Button
+            onClick={() => setShowCreateForm(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            + Nuevo Tema
+          </Button>
+        )}
       </div>
 
       {/* Mensaje de éxito */}
-      {showSuccessMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-          <div className="flex items-center">
-            <div className="text-green-600 text-lg mr-2">✅</div>
-            <div>
-              <h3 className="text-green-800 font-medium">¡Tema creado exitosamente!</h3>
-              <p className="text-green-600 text-sm">Tu tema ha sido agregado al foro.</p>
+      {successMessage.show && (() => {
+        const message = getSuccessMessage(successMessage.type);
+        return (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center">
+              <div className="text-green-600 text-lg mr-2">✅</div>
+              <div>
+                <h3 className="text-green-800 font-medium">{message.title}</h3>
+                <p className="text-green-600 text-sm">{message.description}</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Formulario de creación */}
-      {showCreateForm && (
+      {showCreateForm && !editingForoId && (
         <ForoForm
           onForoCreated={handleCreateForo}
           categorias={categorias}
@@ -176,9 +268,23 @@ export const ForoPage = () => {
         />
       )}
 
+      {/* Formulario de edición */}
+      {editingForoId && (() => {
+        const foroToEdit = foros.find(f => f.id === editingForoId);
+        return foroToEdit ? (
+          <ForoEditForm
+            foro={foroToEdit}
+            categorias={categorias}
+            onSave={handleSaveEdit}
+            onCancel={handleCancelEdit}
+            loading={loading}
+          />
+        ) : null;
+      })()}
+
       {/* Lista de temas */}
       <div className="space-y-6">
-        {loading && foros.length === 0 ? (
+        {(loading || userLoading) && foros.length === 0 ? (
           <div className="flex justify-center py-12">
             <LoadingSpinner size="large" />
           </div>
@@ -206,6 +312,7 @@ export const ForoPage = () => {
           foros.map((foro) => {
             const currentLikes = likes[foro.id];
             const isLiked = currentLikes?.user_liked || false;
+            const isForoOwner = isOwner(foro.autor.id);
             
             return (
               <ForoCard
@@ -213,7 +320,10 @@ export const ForoPage = () => {
                 foro={foro}
                 onViewComments={handleViewComments}
                 onToggleLike={handleToggleLike}
+                onEdit={isForoOwner ? handleEditForo : undefined}
+                onDelete={isForoOwner ? handleDeleteForo : undefined}
                 isLiked={isLiked}
+                isOwner={isForoOwner}
               />
             );
           })

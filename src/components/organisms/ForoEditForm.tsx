@@ -22,7 +22,7 @@ export const ForoEditForm: React.FC<ForoEditFormProps> = ({
   const [formData, setFormData] = useState<Partial<CreateForo>>({
     titulo: foro.titulo,
     contenido: foro.contenido,
-    imagen: foro.imagen,
+    imagen: foro.imagen || '',
     categoria_foro_id: foro.categoria_foro.id
   });
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -36,8 +36,19 @@ export const getForoById = async (id: number): Promise<Foro> => {
 
 // Actualizar un tema del foro
 export const updateForo = async (id: number, foro: Partial<CreateForo>): Promise<Foro> => {
+    console.log('Sending PATCH request to:', `/foro/temas/${id}/`, 'with data:', foro);
     const response = await api.patch<Foro>(`/foro/temas/${id}/`, foro);
-    return foroSchema.parse(response.data);
+    console.log('PATCH response received:', response.data);
+    
+    try {
+        const parsedData = foroSchema.parse(response.data);
+        console.log('Schema validation successful:', parsedData);
+        return parsedData;
+    } catch (error) {
+        console.error('Schema validation error:', error);
+        console.error('Response data that failed validation:', response.data);
+        throw error;
+    }
 };
 
 // Eliminar un tema del foro
@@ -78,7 +89,7 @@ export const getForoCommentById = async (id: number): Promise<ComentarioForo> =>
 };
 
 // Actualizar un comentario del foro
-export const updateForoComment = async (id: number, comment: Partial<UpdateForoComment>): Promise<ComentarioForo> => {
+export const updateForoComment = async (id: number, comment: UpdateForoComment): Promise<ComentarioForo> => {
     const response = await api.patch<ComentarioForo>(`/foro/comentarios/${id}/`, comment);
     return response.data;
 };

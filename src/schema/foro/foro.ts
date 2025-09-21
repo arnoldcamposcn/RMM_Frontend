@@ -5,6 +5,7 @@ export const autorSchema = z.object({
   id: z.number(),
   email: z.string().email(),
   usuario_unico: z.string(),
+  perfil_url: z.string().nullable().optional(),
 });
 
 // Categoría del foro
@@ -72,11 +73,16 @@ export const createForoSchema = z.object({
 export const createForoCommentSchema = z.object({
   tema: z.number(),
   contenido: z.string(),
-  parent: z.number().nullable().optional(),
+  parent: z.union([z.number(), z.string(), z.null()]).optional(),
 });
 
-// Schema para actualizar un comentario de foro
+// Schema para actualizar un comentario de foro (PATCH)
 export const updateForoCommentSchema = z.object({
+  contenido: z.string(),
+});
+
+// Schema para respuesta completa de comentario actualizado
+export const updatedForoCommentResponseSchema = z.object({
   id: z.number(),
   contenido: z.string(),
   creado_en: z.string(),

@@ -31,7 +31,7 @@ export const ForoCommentForm: React.FC<ForoCommentFormProps> = ({
       await onCommentAdded({
         tema: temaId,
         contenido: content.trim(),
-        parent: parentId || null
+        parent: parentId || ""
       });
       
       setContent(''); // Limpiar formulario
@@ -50,7 +50,7 @@ export const ForoCommentForm: React.FC<ForoCommentFormProps> = ({
     <form onSubmit={handleSubmit} className="space-y-3">
       <TextArea
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={setContent}
         placeholder={placeholder}
         rows={4}
         disabled={loading || isSubmitting}
@@ -65,8 +65,8 @@ export const ForoCommentForm: React.FC<ForoCommentFormProps> = ({
           {content.trim() && (
             <Button
               type="button"
-              variant="outline"
-              size="sm"
+              variant="secondary"
+              size="small"
               onClick={handleCancel}
               disabled={loading || isSubmitting}
             >
@@ -76,7 +76,7 @@ export const ForoCommentForm: React.FC<ForoCommentFormProps> = ({
           
           <Button
             type="submit"
-            size="sm"
+            size="small"
             disabled={!content.trim() || loading || isSubmitting}
           >
             {isSubmitting ? 'Enviando...' : 'Enviar'}

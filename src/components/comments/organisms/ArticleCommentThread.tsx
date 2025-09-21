@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ArticlePostComment } from '../../types';
+import type { ArticlePostComment } from '../../../schema/article/article';
 import { CommentHeader, CommentContent, CommentActions } from '../molecules';
 import { ArticleReplyForm } from './ArticleReplyForm';
 
@@ -119,7 +119,7 @@ export const ArticleCommentThread: React.FC<ArticleCommentThreadProps> = ({
       {/* Respuestas - Solo se muestran si el comentario está expandido */}
       {hasReplies && isExpanded && (
         <div className="ml-8 space-y-3 animate-in fade-in-0 slide-in-from-top-2 duration-300">
-          {replies.map((reply) => (
+          {replies.map((reply: ArticlePostComment) => (
             <ArticleCommentThread
               key={reply.id}
               comment={reply}

@@ -5,6 +5,7 @@ import { ForoCommentForm } from '../organisms/ForoCommentForm';
 import { LoadingSpinner } from '../atoms/LoadingSpinner';
 import { ErrorMessage } from '../atoms/ErrorMessage';
 import { EmptyState } from '../atoms/EmptyState';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
 
 interface ForoCommentsTemplateProps {
   temaId: number;
@@ -24,16 +25,10 @@ export const ForoCommentsTemplate: React.FC<ForoCommentsTemplateProps> = ({ tema
     startEdit,
     cancelEdit,
     startReply,
-    cancelReply,
-    setError
+    cancelReply
   } = useForoComments(temaId);
 
-  // Simular usuario actual (en una app real vendría del contexto)
-  const isCurrentUserAuthor = (authorId: number) => {
-    // Por ahora, simular que el usuario actual es el autor si el ID es 2
-    // En una implementación real, esto vendría del contexto de autenticación
-    return authorId === 2;
-  };
+  const { isOwner } = useCurrentUser();
 
   const handleCommentAdded = async (commentData: any) => {
     try {
@@ -141,7 +136,7 @@ export const ForoCommentsTemplate: React.FC<ForoCommentsTemplateProps> = ({ tema
               onCancelEdit={cancelEdit}
               onStartReply={startReply}
               onCancelReply={cancelReply}
-              isCurrentUserAuthor={isCurrentUserAuthor}
+              isCurrentUserAuthor={isOwner}
               loading={loading}
             />
           ))}
