@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { Foro } from '../../schema/foro/foro';
-import { ForoInlineCommentForm } from './ForoInlineCommentForm';
-import { ForoInlineComments } from './ForoInlineComments';
+import RequireAuth from '../../hooks/RequireAuth';
 
 interface ForoCardProps {
   foro: Foro;
-  onViewComments?: (foroId: number) => void; // Ahora opcional ya que se usa inline
   onToggleLike: (foroId: number) => void;
   onEdit?: (foroId: number) => void;
   onDelete?: (foroId: number) => void;
@@ -15,16 +13,12 @@ interface ForoCardProps {
 
 export const ForoCard: React.FC<ForoCardProps> = ({ 
   foro, 
-  onViewComments, // Mantenido para compatibilidad con componentes padre
   onToggleLike,
   onEdit,
   onDelete,
   isLiked = false,
   isOwner = false
 }) => {
-  const [showInlineCommentForm, setShowInlineCommentForm] = useState(false);
-  const [showInlineComments, setShowInlineComments] = useState(false);
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -40,32 +34,14 @@ export const ForoCard: React.FC<ForoCardProps> = ({
     return content.substring(0, maxLength) + '...';
   };
 
-  const handleReplyClick = () => {
-    setShowInlineCommentForm(true);
-    setShowInlineComments(false); // Cerrar comentarios si están abiertos
-  };
-
-  const handleCancelReply = () => {
-    setShowInlineCommentForm(false);
-  };
-
-  const handleCommentAdded = () => {
-    setShowInlineCommentForm(false);
-    // Opcional: refrescar la lista de comentarios o mostrar mensaje de éxito
-  };
-
-  const handleViewCommentsClick = () => {
-    setShowInlineComments(true);
-    setShowInlineCommentForm(false); // Ocultar formulario si está abierto
-    // No llamar a onViewComments para mantener solo la vista inline
-    // onViewComments se mantiene para compatibilidad con componentes padre
-    if (onViewComments) {
-      // Variable mantenida para compatibilidad, no se usa para evitar vista completa
+  const handleToggleLike = async () => {
+    try {
+      await onToggleLike(foro.id);
+    } catch (error) {
+      // Si hay error (probablemente por falta de autenticación), mostrar mensaje
+      console.error('Error al dar like:', error);
+      // Aquí podrías mostrar un toast o mensaje al usuario
     }
-  };
-
-  const handleCloseComments = () => {
-    setShowInlineComments(false);
   };
 
   return (
@@ -114,6 +90,7 @@ export const ForoCard: React.FC<ForoCardProps> = ({
           </div>
 
           {/* Acciones del propietario */}
+          <RequireAuth>
           {isOwner && (onEdit || onDelete) && (
             <div className="flex items-center space-x-2 ml-4">
               {onEdit && (
@@ -136,21 +113,8 @@ export const ForoCard: React.FC<ForoCardProps> = ({
               )}
             </div>
           )}
+          </RequireAuth>
         </div>
-
-        {/* Imagen del tema */}
-        {foro.imagen && (
-          <div className="mb-4">
-            <img 
-              src={foro.imagen} 
-              alt={foro.titulo}
-              className="w-full h-48 object-cover rounded-md"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </div>
-        )}
 
         {/* Contenido */}
         <div className="paragraph-magazine text-gray-700 mb-4 leading-relaxed">
@@ -161,42 +125,16 @@ export const ForoCard: React.FC<ForoCardProps> = ({
       {/* Footer con acciones */}
       <div className="px-6 py-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white rounded-b-xl">
         <div className="flex items-center justify-between">
-          {/* Botones de acción izquierda */}
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={showInlineCommentForm ? handleCancelReply : handleReplyClick}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                showInlineCommentForm 
-                  ? 'text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100' 
-                  : 'text-[#132F56] hover:text-blue-600 bg-gray-100 hover:bg-blue-50'
-              }`}
-            >
-              <span>{showInlineCommentForm ? '✕' : '💬'}</span>
-              <span>{showInlineCommentForm ? 'Cancelar' : 'Responder'}</span>
-            </button>
-            
-            <button
-              onClick={showInlineComments ? handleCloseComments : handleViewCommentsClick}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                showInlineComments 
-                  ? 'text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100' 
-                  : 'text-[#132F56] hover:text-slate-600 bg-gray-100 hover:bg-slate-50'
-              }`}
-            >
-              <span>{showInlineComments ? '✕' : '💬'}</span>
-              <span>
-                {showInlineComments 
-                  ? 'Ocultar respuestas' 
-                  : `Ver respuestas (${foro.comentarios?.length || 0})`
-                }
-              </span>
-            </button>
+          {/* Lado izquierdo con contador de comentarios */}
+          <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <span>💬</span>
+            <span>{foro.comentarios?.length || 0} respuestas</span>
           </div>
 
           {/* Reacciones en la derecha */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => onToggleLike(foro.id)}
+              onClick={handleToggleLike}
               className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 ${
                 isLiked 
                   ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-600 hover:from-red-200 hover:to-red-300 border border-red-200' 
@@ -209,27 +147,6 @@ export const ForoCard: React.FC<ForoCardProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Formulario de comentario inline - FUERA del card principal */}
-      {showInlineCommentForm && (
-        <div className="mt-2">
-          <ForoInlineCommentForm
-            temaId={foro.id}
-            onCommentAdded={handleCommentAdded}
-            onCancel={handleCancelReply}
-          />
-        </div>
-      )}
-
-      {/* Comentarios inline - FUERA del card principal */}
-      {showInlineComments && (
-        <div className="mt-2">
-          <ForoInlineComments
-            temaId={foro.id}
-            onClose={handleCloseComments}
-          />
-        </div>
-      )}
     </div>
   );
 };

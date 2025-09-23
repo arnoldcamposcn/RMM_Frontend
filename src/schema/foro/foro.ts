@@ -52,7 +52,6 @@ export const foroSchema = z.object({
   id: z.number(),
   titulo: z.string(),
   contenido: z.string(),
-  imagen: z.string(),
   autor: autorSchema,
   categoria_foro: categoriaForoSchema,
   creado_en: z.string(),

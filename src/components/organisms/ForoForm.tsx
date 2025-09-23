@@ -1,53 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { CreateForo, CategoriaForo } from '../../schema/foro/foro';
 import { Button } from '../atoms/Button';
 import { TextArea } from '../comments/atoms/TextArea';
 import { LoadingSpinner } from '../comments/atoms/LoadingSpinner';
 
 interface ForoFormProps {
-  onForoCreated: (foroData: CreateForo) => Promise<void>;
+  onSave: (foroData: CreateForo) => Promise<void>;
+  onCancel: () => void;
   categorias: CategoriaForo[];
   categoriasLoading?: boolean;
+  isSubmitting?: boolean;
+  error?: string | null;
 }
 
-export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, categoriasLoading = false }) => {
+export const ForoForm: React.FC<ForoFormProps> = ({ 
+  onSave, 
+  onCancel,
+  categorias, 
+  categoriasLoading = false,
+  isSubmitting = false,
+  error = null
+}) => {
   const [formData, setFormData] = useState<CreateForo>({
     titulo: '',
     contenido: '',
     imagen: '',
-    categoria_foro_id: categorias[0]?.id || 1
+    categoria_foro_id: 1
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    if (categorias.length > 0) {
+      setFormData(prev => ({ ...prev, categoria_foro_id: categorias[0].id }));
+    }
+  }, [categorias]);
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.titulo.trim() || !formData.contenido.trim()) {
-      setError('El título y contenido son obligatorios');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Solo pasar los datos al componente padre, no crear el foro aquí
-      await onForoCreated(formData);
-      
-      // Limpiar formulario
-      setFormData({
-        titulo: '',
-        contenido: '',
-        imagen: '',
-        categoria_foro_id: categorias[0]?.id || 1
-      });
-    } catch (err) {
-      setError('Error al crear el tema del foro');
-      console.error('Error creating foro:', err);
-    } finally {
-      setLoading(false);
-    }
+    onSave(formData);
   };
 
   const handleChange = (field: keyof CreateForo, value: string | number) => {
@@ -58,7 +47,7 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-2 border-blue-200">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">
         Crear Nuevo Tema
       </h2>
@@ -76,7 +65,7 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
             onChange={(e) => handleChange('titulo', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Escribe el título del tema..."
-            disabled={loading}
+            disabled={isSubmitting}
           />
         </div>
 
@@ -96,7 +85,7 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
               value={formData.categoria_foro_id}
               onChange={(e) => handleChange('categoria_foro_id', parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              disabled={loading}
+              disabled={isSubmitting || categoriasLoading}
             >
               {categorias.map((categoria) => (
                 <option key={categoria.id} value={categoria.id}>
@@ -117,25 +106,12 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
             onChange={(value: string) => handleChange('contenido', value)}
             placeholder="Describe tu tema en detalle..."
             rows={6}
-            disabled={loading}
+            disabled={isSubmitting}
           />
         </div>
 
         {/* Imagen (opcional) */}
-        <div>
-          <label htmlFor="imagen" className="block text-sm font-medium text-gray-700 mb-1">
-            URL de Imagen (opcional)
-          </label>
-          <input
-            id="imagen"
-            type="url"
-            value={formData.imagen}
-            onChange={(e) => handleChange('imagen', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="https://ejemplo.com/imagen.jpg"
-            disabled={loading}
-          />
-        </div>
+        
 
         {/* Error */}
         {error && (
@@ -144,14 +120,30 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
           </div>
         )}
 
-        {/* Botón de envío */}
-        <Button
-          type="submit"
-          disabled={loading || !formData.titulo.trim() || !formData.contenido.trim()}
-          className="w-full"
-        >
-          {loading ? 'Creando...' : 'Crear Tema'}
-        </Button>
+        {/* Botones */}
+        <div className="flex items-center space-x-3 pt-4">
+          <Button
+            type="submit"
+            disabled={isSubmitting || !formData.titulo.trim() || !formData.contenido.trim()}
+            className="flex-1"
+          >
+            {isSubmitting ? 'Creando...' : 'Crear Tema'}
+          </Button>
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isSubmitting}
+            className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Cancelar
+          </button>
+        </div>
+
+        {isSubmitting && (
+          <div className="flex justify-center mt-2">
+            <LoadingSpinner size="small" />
+          </div>
+        )}
       </form>
     </div>
   );

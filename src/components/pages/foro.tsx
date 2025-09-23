@@ -5,25 +5,22 @@ import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { ForoForm } from '../organisms/ForoForm';
 import { ForoEditForm } from '../organisms/ForoEditForm';
 import { ForoCard } from '../molecules/ForoCard';
-import { ForoCommentsTemplate } from '../comments/templates/ForoCommentsTemplate';
 import { LoadingSpinner } from '../comments/atoms/LoadingSpinner';
 import { ErrorMessage } from '../comments/atoms/ErrorMessage';
 import { Button } from '../comments/atoms/Button';
 import RequireAuth from '../../hooks/RequireAuth';
+import type { CreateForo } from '../../schema/foro/foro';
 
 export const ForoPage = () => {
   const {
     foros,
-    selectedForo,
     loading,
     error,
     likes,
     createNewForo,
     updateForo,
     removeForo,
-    loadForoById,
     toggleForoLikes,
-    setSelectedForo
   } = useForo();
 
   const {
@@ -39,24 +36,31 @@ export const ForoPage = () => {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingForoId, setEditingForoId] = useState<number | null>(null);
-  const [selectedForoId, setSelectedForoId] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<{
     show: boolean;
     type: 'create' | 'edit' | 'delete';
   }>({ show: false, type: 'create' });
 
-  const handleCreateForo = async (foroData: any) => {
+  const handleCreateForo = async (foroData: CreateForo) => {
+    if (!foroData.titulo?.trim() || !foroData.contenido?.trim()) {
+      setFormError('El título y el contenido son obligatorios.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError(null);
+
     try {
       await createNewForo(foroData);
-      // Ocultar el formulario después de crear exitosamente
       setShowCreateForm(false);
-      // Mostrar mensaje de éxito específico para crear
       setSuccessMessage({ show: true, type: 'create' });
-      // Ocultar mensaje después de 3 segundos
       setTimeout(() => setSuccessMessage({ show: false, type: 'create' }), 3000);
-    } catch (error) {
-      console.error('Error creating foro:', error);
-      // Mantener el formulario abierto si hay error para que el usuario pueda intentar de nuevo
+    } catch (err) {
+      setFormError('Error al crear el tema. Por favor, inténtalo de nuevo.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -65,23 +69,35 @@ export const ForoPage = () => {
     setShowCreateForm(false); // Ocultar formulario de creación si está abierto
   };
 
-  const handleSaveEdit = async (foroId: number, foroData: any) => {
+  const handleSaveEdit = async (foroId: number, foroData: Partial<CreateForo>) => {
+    if (!foroData.titulo?.trim() || !foroData.contenido?.trim()) {
+      setFormError('El título y el contenido son obligatorios.');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setFormError(null);
+
     try {
-      console.log('Saving edit for foro:', foroId, 'with data:', foroData);
       await updateForo(foroId, foroData);
-      console.log('Edit saved successfully');
       setEditingForoId(null);
-      // Mostrar mensaje de éxito específico para editar
       setSuccessMessage({ show: true, type: 'edit' });
       setTimeout(() => setSuccessMessage({ show: false, type: 'edit' }), 3000);
     } catch (error) {
-      console.error('Error updating foro:', error);
-      // No mostramos error aquí porque el hook ya maneja los errores
+      setFormError('Error al actualizar el tema. Por favor, inténtalo de nuevo.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleCancelEdit = () => {
     setEditingForoId(null);
+    setFormError(null);
+  };
+
+  const handleCancelCreate = () => {
+    setShowCreateForm(false);
+    setFormError(null);
   };
 
   const handleDeleteForo = async (foroId: number) => {
@@ -134,94 +150,9 @@ export const ForoPage = () => {
   // Usar el hook para verificar si el usuario actual es propietario
   // const isCurrentUserOwner = isOwner; // Ya está disponible desde useCurrentUser
 
-  const handleViewComments = async (foroId: number) => {
-    setSelectedForoId(foroId);
-    await loadForoById(foroId);
-  };
-
   const handleToggleLike = async (foroId: number) => {
     await toggleForoLikes(foroId);
   };
-
-  const handleBackToList = () => {
-    setSelectedForoId(null);
-    setSelectedForo(null);
-  };
-
-  // Si hay un tema seleccionado, mostrar sus detalles y comentarios
-  if (selectedForoId && selectedForo) {
-    const currentLikes = likes[selectedForo.id];
-    const isLiked = currentLikes?.user_liked || false;
-
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Botón de regreso */}
-        <Button
-          onClick={handleBackToList}
-          variant="secondary"
-          className="mb-6"
-        >
-          ← Volver al Foro
-        </Button>
-
-        {/* Detalles del tema */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            {selectedForo.titulo}
-          </h1>
-          
-          <div className="flex items-center text-sm text-gray-600 mb-4">
-            <span className="font-medium">{selectedForo.autor.usuario_unico}</span>
-            <span className="mx-2">•</span>
-            <span>{new Date(selectedForo.creado_en).toLocaleDateString('es-ES')}</span>
-            <span className="mx-2">•</span>
-            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-              {selectedForo.categoria_foro.nombre_categoria}
-            </span>
-          </div>
-
-          {selectedForo.imagen && (
-            <div className="mb-4">
-              <img 
-                src={selectedForo.imagen} 
-                alt={selectedForo.titulo}
-                className="w-full h-64 object-cover rounded-md"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            </div>
-          )}
-
-          <div className="text-gray-700 mb-6">
-            <p className="whitespace-pre-wrap">{selectedForo.contenido}</p>
-          </div>
-
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-            <button
-              onClick={() => handleToggleLike(selectedForo.id)}
-              className={`flex items-center space-x-1 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                isLiked 
-                  ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <span>{isLiked ? '❤️' : '🤍'}</span>
-              <span>{currentLikes?.total_likes || selectedForo.likes_count}</span>
-            </button>
-
-            <div className="flex items-center space-x-1 text-sm text-gray-600">
-              <span>💬</span>
-              <span>{selectedForo.comentarios?.length || 0} comentarios</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Comentarios del tema */}
-        <ForoCommentsTemplate temaId={selectedForoId} />
-      </div>
-    );
-  }
 
   // Vista principal del foro
   return (
@@ -282,9 +213,12 @@ export const ForoPage = () => {
       {/* Formulario de creación */}
       {showCreateForm && !editingForoId && (
         <ForoForm
-          onForoCreated={handleCreateForo}
+          onSave={handleCreateForo}
+          onCancel={handleCancelCreate}
           categorias={categorias}
           categoriasLoading={categoriasLoading}
+          isSubmitting={isSubmitting}
+          error={formError}
         />
       )}
 
@@ -297,7 +231,8 @@ export const ForoPage = () => {
             categorias={categorias}
             onSave={handleSaveEdit}
             onCancel={handleCancelEdit}
-            loading={loading}
+            isSubmitting={isSubmitting}
+            error={formError}
           />
         ) : null;
       })()}
@@ -338,7 +273,6 @@ export const ForoPage = () => {
               <ForoCard
                 key={foro.id}
                 foro={foro}
-                onViewComments={handleViewComments}
                 onToggleLike={handleToggleLike}
                 onEdit={isForoOwner ? handleEditForo : undefined}
                 onDelete={isForoOwner ? handleDeleteForo : undefined}

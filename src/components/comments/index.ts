@@ -1,5 +1,5 @@
 // Exportar todos los componentes principales
-export { CommentsTemplate, ArticleCommentsTemplate, ForoCommentsTemplate } from './templates';
+export { CommentsTemplate, ArticleCommentsTemplate } from './templates';
 
 // Exportar organismos individuales si se necesitan
 export { 

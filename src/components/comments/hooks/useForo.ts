@@ -61,19 +61,11 @@ export const useForo = () => {
     setError(null);
     
     try {
-      const newForo = await createForo(foroData);
-      
-      // Agregar el nuevo foro a la lista sin recargar likes innecesariamente
-      setForos(prev => [newForo, ...prev]);
-      
-      // Cargar likes solo para el nuevo foro
-      await loadForoLikes(newForo.id);
-      
-      return newForo;
+      await createForo(foroData);
+      await loadForos();
     } catch (err) {
       setError('Error al crear el tema del foro');
       console.error('Error creating foro:', err);
-      throw err;
     } finally {
       setLoading(false);
     }
@@ -131,7 +123,7 @@ export const useForo = () => {
         return foro;
       }));
     } catch (err) {
-      setError('Error al actualizar el like');
+      // Solo registrar el error en consola, no mostrar mensaje al usuario
       console.error('Error toggling foro like:', err);
     }
   };
@@ -169,7 +161,7 @@ export const useForo = () => {
     } catch (err) {
       setError('Error al actualizar el tema del foro');
       console.error('Error updating foro:', err);
-      throw err;
+      // No relanzar el error
     } finally {
       setLoading(false);
     }
