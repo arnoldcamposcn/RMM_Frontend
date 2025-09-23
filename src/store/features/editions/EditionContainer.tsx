@@ -17,10 +17,10 @@ const EditionContainer: React.FC = () => {
       image={getMagazine.imagen}
       month={new Date(getMagazine.fecha_publicacion).toLocaleDateString('es-ES', { month: 'long' })}
       // numero_edicion={getMagazine.numero_edicion}
-      // titulo_edicion={getMagazine.titulo_edicion}
+      title={getMagazine.titulo_edicion}
       year={new Date(getMagazine.fecha_publicacion).getFullYear()}
-      onViewPrint={() => {
-        window.open(getMagazine.url_impresa, '_blank');
+        metadata={{
+          url: getMagazine.url_impresa
       }}
     />
   );

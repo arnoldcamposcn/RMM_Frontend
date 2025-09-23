@@ -15,7 +15,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
 
   // Rutas donde NO se debe mostrar el Header
-  const routesWithoutHeader = ['/iniciar-sesion', '/registro'];
+  const routesWithoutHeader = ['/iniciar-sesion', '/registrarse', '/reset-password', '/reset-password-confirm', '/reset-password-confirm/'];
   const shouldShowHeader = !routesWithoutHeader.includes(location.pathname);
 
   const handleSearch = (searchValue: string) => {
@@ -34,7 +34,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     <div className="min-h-screen bg-white ">
       {shouldShowHeader && <Header onSearch={handleSearch} />}
 
-      <main className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-0 py-1 ${shouldShowHeader ? '' : 'min-h-screen'}`}>
+      <main className={`${shouldShowHeader ? 'max-w-6xl mx-auto px-4 sm:px-6 lg:px-0 py-1' : ''}`}>
         {children}
       </main>
 
@@ -43,7 +43,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Footer 
           onNewsletterSubscribe={handleNewsletterSubscribe}
           companyName="Meta Mining"
-          description="Tu fuente confiable de información sobre minería de datos, inteligencia artificial y análisis predictivo."
+          description="Revista especializada en minería: tu fuente confiable de noticias, análisis y tendencias en minería moderna."
         />
       )}
     </div>

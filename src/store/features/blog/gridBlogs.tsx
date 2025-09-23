@@ -19,13 +19,15 @@ const gridBlogs: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-       <h2 className="text-2xl font-bold text-gray-800">Blogs Recientes</h2>
+    <div className="flex flex-col gap-6">
+       <h2 className="text-2xl font-bold text-gray-800">Noticias Recientes</h2>
+       <div className="w-16 h-1 bg-gradient-to-r from-[#53C1A9] to-[#4AB39A] rounded-full"></div>
       {blogs.map((blog) => (
         <EditionCard
           key={blog.id}
           id={blog.id}
           title={blog.titulo_blog}
+          contenido={blog.contenido}
           image={blog.imagen_principal}
           items={[]} // Array vacío ya que este EditionCard no usa items
           onViewMore={() => handleBlogClick(blog.id)}

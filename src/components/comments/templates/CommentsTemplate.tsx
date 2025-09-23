@@ -3,6 +3,8 @@ import type { BlogCommentsListProps } from '../types';
 import { useComments } from '../hooks';
 import { LoadingSpinner, ErrorMessage, EmptyState, Button } from '../atoms';
 import { CommentForm, CommentThread } from '../organisms';
+import RequireAuth from '../../../hooks/RequireAuth';
+
 
 export const CommentsTemplate: React.FC<BlogCommentsListProps> = ({ blogId }) => {
   const {
@@ -85,6 +87,7 @@ export const CommentsTemplate: React.FC<BlogCommentsListProps> = ({ blogId }) =>
           description="Sé el primero en comentar este blog"
         >
           {/* Formulario para agregar el primer comentario */}
+          <RequireAuth>
           <div className="mt-6 pt-6 border-t border-gray-200">
             <h4 className="text-lg font-medium text-gray-900 mb-4">Agregar comentario</h4>
             <CommentForm
@@ -94,6 +97,7 @@ export const CommentsTemplate: React.FC<BlogCommentsListProps> = ({ blogId }) =>
               placeholder="Escribe el primer comentario..."
             />
           </div>
+          </RequireAuth>
         </EmptyState>
       </div>
     );
@@ -107,7 +111,7 @@ export const CommentsTemplate: React.FC<BlogCommentsListProps> = ({ blogId }) =>
           <svg className="w-5 h-5 mr-2 text-azul-codea" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-          Comentarios
+          Comentarios del blog
           <span className="ml-3 bg-azul-codea text-white text-sm font-medium px-2.5 py-0.5 rounded-full">
             {flattenComments(comments).length}
           </span>
@@ -115,8 +119,8 @@ export const CommentsTemplate: React.FC<BlogCommentsListProps> = ({ blogId }) =>
       </div>
 
       {/* Formulario para nuevos comentarios principales */}
+      <RequireAuth>
       <div className="mb-6 pt-6 border-t border-gray-200">
-        <h4 className="text-lg font-medium text-gray-900 mb-4">Agregar comentario</h4>
         <CommentForm
           blogId={blogId}
           parentId={null}
@@ -124,7 +128,7 @@ export const CommentsTemplate: React.FC<BlogCommentsListProps> = ({ blogId }) =>
           placeholder="Escribe tu comentario..."
         />
       </div>
-
+      </RequireAuth>
       {/* Lista de comentarios */}
       <div className="space-y-6">
         {organizeComments(getVisibleComments(comments)).map(({ parent }) => (

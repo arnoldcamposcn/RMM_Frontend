@@ -4,6 +4,7 @@ import type { Magazine } from '../../schema/magazine/magazine';
 import { getAllMagazines } from '../../services/magazine/magazine.service';
 import MonthlyEditionsTemplate from '../templates/MonthlyEditionsTemplate';
 import { cleanRichText } from '../../utils/cleanRichText';
+import Title from '../atoms/Title';
 
 export const EditionContainer = () => {
   const { data: magazines, loading, error } = useFetch<Magazine[]>(getAllMagazines, []);
@@ -28,8 +29,13 @@ export const EditionContainer = () => {
   }));
 
   return (
+    <>
+    <Title className="text-2xl font-bold text-gray-800 pb-4">Ediciones</Title>
+    <div className="w-12 h-0.5 bg-gradient-to-r from-[#4AB39A] to-[#3FA08A] rounded-full mx-0"></div>
+
     <MonthlyEditionsTemplate
-      recentArticles={recentArticles}
+      recentArticles={recentArticles} 
     />
+    </>
   );
 };

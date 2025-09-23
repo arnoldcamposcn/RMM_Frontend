@@ -85,6 +85,18 @@ const ContentSection: React.FC<ContentSectionProps> = ({
 
   return (
     <div className={`space-y-6 ${className}`}>
+
+       {/* Contenido */}
+       <div className="space-y-4">
+        {content.map((paragraph, index) => (
+          <p
+            key={index}
+            className="paragraph-magazine text-gray-700 leading-relaxed"
+          >
+            {paragraph}
+          </p>
+        ))}
+      </div>
       {/* Fecha + botones */}
       <div className="flex justify-between items-center">
         <DateDisplay formattedDate={formattedDate} month={month} year={year} />
@@ -109,17 +121,7 @@ const ContentSection: React.FC<ContentSectionProps> = ({
         </div>
       </div>
 
-      {/* Contenido */}
-      <div className="space-y-4">
-        {content.map((paragraph, index) => (
-          <p
-            key={index}
-            className="paragraph-magazine text-gray-700 leading-relaxed"
-          >
-            {paragraph}
-          </p>
-        ))}
-      </div>
+     
     </div>
   );
 };

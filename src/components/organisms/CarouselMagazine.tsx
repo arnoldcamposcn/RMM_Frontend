@@ -61,9 +61,12 @@ export default function CarouselMagazine({
         {title && (
           <div className="text-start mb-8">
             {title && (
-              <h2 className="title-magazine uppercase font-bold mb-4">
-                {title}
-              </h2>
+              <div className="relative">
+                <h2 className="title-magazine text-2xl sm:text-2xl font-bold mb-2 text-[#132F56]">
+                  {title}
+                </h2>
+                <div className="w-16 h-1 bg-gradient-to-r from-[#53C1A9] to-[#4AB39A] rounded-full"></div>
+              </div>
             )}
           </div>
         )}
@@ -108,39 +111,42 @@ export default function CarouselMagazine({
                   className="group cursor-pointer h-full"
                   onClick={() => handleCardClick(item)}
                 >
-                  <div className="bg-white rounded-md shadow-md h-full flex flex-col">
-                    {/* Imagen con overlay */}
-                    <div className="relative h-56 overflow-hidden">
+                  <div className="carousel-card bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[#53C1A9] h-full flex flex-col transition-all duration-300 group-hover:-translate-y-1">
+                    {/* Imagen con overlay mejorado */}
+                    <div className="relative h-48 sm:h-56 overflow-hidden rounded-t-xl">
                       <img 
                         src={item.image} 
                         alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
+                      {/* Overlay profesional */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      {/* Indicador de hover */}
+                      <div className="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                        <svg className="w-4 h-4 text-[#53C1A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </div>
                     </div>
 
                     {/* Contenido de la card */}
-                    <div className="p-6 flex-1 flex flex-col">
-                    {/* {item.category && (
-                        <div className="pb-4">
-                          <span className={`${getCategoryColor(item.category)} text-white px-2 py-1 rounded-md text-xs font-medium tracking-wide`}>
-                            {item.category}
-                          </span>
-                        </div>
-                      )} */}
-                      <h3 className="title-magazine mb-3 leading-tight group-hover:text-azul-codea transition-colors duration-300">
+                    <div className="p-5 sm:p-6 flex-1 flex flex-col">
+                      <h3 className="carousel-card-title title-magazine text-lg sm:text-xl font-semibold mb-3 leading-tight text-[#132F56] group-hover:text-[#53C1A9] transition-colors duration-300 line-clamp-2">
                         {item.title}
                       </h3>
-                      <p className="paragraph-magazine leading-relaxed line-clamp-3 flex-1">
+                      <p className="carousel-card-description paragraph-magazine text-sm sm:text-base leading-relaxed line-clamp-3 flex-1 text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
                         {item.description}
                       </p>
                       
-                      {/* Línea decorativa */}
-                      {/* <div className="mt-4 pt-4 border-t border-gray-100">
+                      {/* Línea decorativa con efecto */}
+                      <div className="mt-4 pt-4 border-t border-gray-100 group-hover:border-[#53C1A9]/30 transition-colors duration-300">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500 font-medium">Leer más</span>
-                          <div className="w-6 h-px bg-gradient-to-r from-blue-500 to-transparent"></div>
+                          <span className="text-sm text-[#53C1A9] font-semibold group-hover:text-[#4AB39A] transition-colors duration-300">
+                            Leer más
+                          </span>
+                          <div className="w-8 h-px bg-gradient-to-r from-[#53C1A9] to-transparent group-hover:w-12 transition-all duration-300"></div>
                         </div>
-                      </div> */}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -149,13 +155,13 @@ export default function CarouselMagazine({
           </Swiper>
 
           {/* Botones de navegación personalizados */}
-          <div className={`swiper-button-prev-${id} absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-10 w-12 h-12 bg-white rounded-full shadow-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 cursor-pointer group`}>
+          <div className={`swiper-button-prev-${id} absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-10 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-[#132F56] hover:text-white hover:bg-[#53C1A9] hover:border-[#53C1A9] hover:shadow-xl transition-all duration-300 cursor-pointer group`}>
             <svg className="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </div>
 
-          <div className={`swiper-button-next-${id} absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-10 w-12 h-12 bg-white rounded-full shadow-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 cursor-pointer group`}>
+          <div className={`swiper-button-next-${id} absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-10 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-[#132F56] hover:text-white hover:bg-[#53C1A9] hover:border-[#53C1A9] hover:shadow-xl transition-all duration-300 cursor-pointer group`}>
             <svg className="w-5 h-5 transform group-hover:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

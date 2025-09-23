@@ -3,6 +3,7 @@ import React from 'react';
 import { useArticleComments } from '../hooks';
 import { LoadingSpinner, ErrorMessage, EmptyState, Button } from '../atoms';
 import { ArticleCommentForm, ArticleCommentThread } from '../organisms';
+import RequireAuth from '../../../hooks/RequireAuth';
 
 interface ArticleCommentsTemplateProps {
   articleId: number;
@@ -89,8 +90,8 @@ export const ArticleCommentsTemplate: React.FC<ArticleCommentsTemplateProps> = (
           description="Sé el primero en comentar este artículo"
         >
           {/* Formulario para agregar el primer comentario */}
+          <RequireAuth>
           <div className="mt-6 pt-6 border-t border-gray-200">
-            <h4 className="text-lg font-medium text-gray-900 mb-4">Agregar comentario</h4>
             <ArticleCommentForm
               blogId={articleId}
               parentId={null}
@@ -98,6 +99,7 @@ export const ArticleCommentsTemplate: React.FC<ArticleCommentsTemplateProps> = (
               placeholder="Escribe el primer comentario..."
             />
           </div>
+          </RequireAuth>
         </EmptyState>
       </div>
     );

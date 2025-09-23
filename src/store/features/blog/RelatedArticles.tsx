@@ -20,6 +20,7 @@ const GridArticles: React.FC<{ id: number }> = ({ id }) => {
           key={article.id}
           id={article.id}
           title={article.titulo_articulo}
+          contenido={article.contenido}
           image={article.imagen_principal}
           onViewMore={() => navigate(`/articulos/${article.id}`)}
           items={[]}

@@ -2,7 +2,8 @@
 import EditionsSection from '../organisms/EditionsSection';
 // import CarouselMagazine, { type CardData } from '../organisms/CarouselMagazine';
 import ArticleCarouselContainer from '../../store/features/articles/BlogCarouselContainer';
-import BlogCarouselContainer from '../../store/features/blog/BlogCarouselContainer';
+import { MessagesForo } from '../organisms/MessagesForo';
+// import BlogCarouselContainer from '../../store/features/blog/BlogCarouselContainer';
 
 
 /**
@@ -18,10 +19,12 @@ export default function HomeTemplate() {
 
 
       {/* Sección 3: Blogs Destacados (Dinámico) */}
-      <BlogCarouselContainer />
+      {/* <BlogCarouselContainer /> */}
 
       {/* Sección 2: Artículos Recientes (Dinámico) */}
       <ArticleCarouselContainer />
+      <MessagesForo />
+
 
 
     </>

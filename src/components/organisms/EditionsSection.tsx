@@ -1,6 +1,8 @@
 import React from 'react';
-import Title from '../atoms/Title';
+// import Title from '../atoms/Title';
 import FeaturedEditionContainer from '../../store/features/editions/FeaturedEditionContainer';
+// import GridArticles from '../../store/features/blog/RelatedArticles';
+import GridBlogs from '../../store/features/blog/gridBlogs';
 
 
 
@@ -17,22 +19,21 @@ const EditionsSection: React.FC<EditionsSectionProps> = ({
 }) => {
   return (
     <section className={`${className}`}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 py-8">
           
           {/* Columna 1: Última edición (2/3 del ancho en desktop) */}
           <div className="lg:col-span-2">
             <div className="mb-6">
-              <Title className="title-magazine uppercase font-bold">Edición de lanzamiento</Title>
+              {/* <Title className="title-magazine uppercase font-bold">Edición de lanzamiento</Title> */}
+              <h2 className="text-2xl font-bold text-gray-800 pb-4">Ultima Edición</h2>
+              <div className="w-16 h-1 bg-gradient-to-r from-[#53C1A9] to-[#4AB39A] rounded-full"></div>
+
             </div>
-            <FeaturedEditionContainer />
+              <FeaturedEditionContainer />
           </div>
           
           {/* Columna 2: Ediciones semanales (1/3 del ancho en desktop) */}
           <div className="lg:col-span-1">
-            <div className="mb-6">
-              {/* <Title className="title-magazine uppercase font-bold"></Title> */}
-            </div>
-            
             {/* Contenedor flex vertical para las cards */}
             <div className="flex flex-col space-y-4">
               {/* {weeklyEditions.map((edition) => (
@@ -44,7 +45,11 @@ const EditionsSection: React.FC<EditionsSectionProps> = ({
                   onViewMore={() => onViewEdition?.(edition.id)}
                 />
               ))} */}
-              <img src= "/images/ed-terrain-photo.jpg"  />
+              {/* <Title className="title-magazine uppercase font-bold">Blog Recientes</Title> */}
+              <GridBlogs/>
+              
+
+              
             </div>
            
           </div>

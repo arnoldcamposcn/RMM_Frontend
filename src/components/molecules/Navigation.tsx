@@ -18,13 +18,16 @@ const Navigation: React.FC<NavigationProps> = ({ items, className = '' }) => {
         <a
           key={index}
           href={item.href}
-          className={`title-header hover:text-verde-codea transition-colors duration-200 ${
+          className={`title-header nav-item-hover transition-all duration-300 relative ${
             item.isActive 
-              ? 'text-white font-medium border-b-2 border-verde-codea pb-1' 
-              : 'text-white'
+              ? 'nav-item-active font-semibold pb-1' 
+              : 'text-white hover:text-[#53C1A9]'
           }`}
         >
           {item.label}
+          {item.isActive && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#53C1A9] rounded-full"></div>
+          )}
         </a>
       ))}
     </nav>

@@ -74,16 +74,16 @@ const Footer: React.FC<FooterProps> = ({
   };
 
   return (
-    <footer className={`bg-gray-900 text-white ${className}`}>
+    <footer className={`magazine-header border-b border-[#53C1A9] border-opacity-20 text-white ${className}`}>
       {/* Contenido principal del footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-0 py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           
           {/* Columna 1: Logo, descripción y redes sociales */}
           <div className="space-y-6">
             <div>
               {logoText ? (
-                <div className="title-magazine text-xl text-white mb-4">
+                <div className="title-magazine text-2xl text-white mb-4 font-bold">
                   {logoText}
                 </div>
               ) : (
@@ -92,13 +92,13 @@ const Footer: React.FC<FooterProps> = ({
                 </div>
               )}
               
-              <p className="paragraph-magazine text-gray-300 text-sm leading-relaxed">
+              <p className="paragraph-magazine text-gray-200 text-sm leading-relaxed">
                 {description}
               </p>
             </div>
             
             <div>
-              <h4 className="paragraph-magazine text-white font-semibold mb-4 text-sm uppercase tracking-wide">
+              <h4 className="title-magazine text-white font-bold mb-4 text-sm uppercase tracking-wider">
                 Síguenos
               </h4>
               <SocialLinks links={socialLinks} size="md" />
@@ -133,23 +133,29 @@ const Footer: React.FC<FooterProps> = ({
         </div>
       </div>
       
-      {/* Sección inferior - Derechos reservados */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Línea divisoria elegante */}
+      <div className="border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-0 py-8">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-            <p className="paragraph-magazine text-gray-400 text-sm text-center sm:text-left">
-              © {currentYear} {companyName}. Todos los derechos reservados.
-            </p>
+            <div className="text-center sm:text-left">
+              <p className="paragraph-magazine text-gray-200 text-sm">
+                © {currentYear} {companyName}. Todos los derechos reservados.
+              </p>
+              <p className="paragraph-magazine text-gray-300 text-xs mt-1">
+                Revista especializada en minería 
+              </p>
+            </div>
             
             {/* Enlaces legales adicionales en la parte inferior */}
-            <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
+            <div className="flex flex-wrap justify-center sm:justify-end space-x-6">
               {legalLinks.slice(0, 3).map((link, index) => (
                 <a
                   key={index}
                   href={link.href}
-                  className="paragraph-magazine text-gray-400 hover:text-white text-sm transition-colors duration-200"
+                  className="paragraph-magazine text-gray-200 hover:text-white text-sm transition-colors duration-300 relative group"
                 >
                   {link.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#53C1A9] transition-all duration-300 group-hover:w-full"></span>
                 </a>
               ))}
             </div>

@@ -3,7 +3,7 @@ export function Button({ children, ...props }: Props) {
   return (
     <button
       {...props}
-      className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+      className="w-full px-4 py-3 bg-azul-codea text-white rounded-lg hover:bg-azul-codea/80 transition font-semibold text-sm"
     >
       {children}
     </button>

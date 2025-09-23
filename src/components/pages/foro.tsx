@@ -9,6 +9,7 @@ import { ForoCommentsTemplate } from '../comments/templates/ForoCommentsTemplate
 import { LoadingSpinner } from '../comments/atoms/LoadingSpinner';
 import { ErrorMessage } from '../comments/atoms/ErrorMessage';
 import { Button } from '../comments/atoms/Button';
+import RequireAuth from '../../hooks/RequireAuth';
 
 export const ForoPage = () => {
   const {
@@ -224,35 +225,54 @@ export const ForoPage = () => {
 
   // Vista principal del foro
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Foro</h1>
-          <p className="text-gray-600 mt-2">
-            Comparte ideas, haz preguntas y conecta con la comunidad
-          </p>
+    <div className="max-w-6xl mx-auto px-4 pb-8">
+      {/* Header con estilo magazine */}
+      <div className=" py-8 mb-8">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <div className="mb-4">
+              <h1 className="title-magazine text-4xl font-bold text-[#132F56] mb-3">
+                Foro de Discusión
+              </h1>
+              <div className="w-24 h-1"></div>
+            </div>
+            <p className="paragraph-magazine text-base text-gray-600 leading-relaxed">
+              Comparte ideas, haz preguntas y conecta con la comunidad minera. 
+              Participa en conversaciones sobre los temas más relevantes de la industria.
+            </p>
+          </div>
+          <RequireAuth>
+          {!showCreateForm && !editingForoId && (
+            <div className="ml-8">
+              <Button
+                onClick={() => setShowCreateForm(true)}
+                className="bg-gradient-to-r from-[#53C1A9] to-[#4AB39A] hover:from-[#4AB39A] hover:to-[#3FA08A] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center space-x-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <span>Nuevo Tema</span>
+              </Button>
+            </div>
+          )}
+          </RequireAuth>
         </div>
-        
-        {!showCreateForm && !editingForoId && (
-          <Button
-            onClick={() => setShowCreateForm(true)}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            + Nuevo Tema
-          </Button>
-        )}
       </div>
 
       {/* Mensaje de éxito */}
       {successMessage.show && (() => {
         const message = getSuccessMessage(successMessage.type);
         return (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center">
-              <div className="text-green-600 text-lg mr-2">✅</div>
+          <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl p-6 mb-6 shadow-sm">
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
               <div>
-                <h3 className="text-green-800 font-medium">{message.title}</h3>
-                <p className="text-green-600 text-sm">{message.description}</p>
+                <h3 className="title-magazine text-green-800 font-semibold text-lg mb-1">{message.title}</h3>
+                <p className="paragraph-magazine text-green-600">{message.description}</p>
               </div>
             </div>
           </div>

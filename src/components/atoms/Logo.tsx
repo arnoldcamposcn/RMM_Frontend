@@ -7,7 +7,7 @@ interface LogoProps {
 const Logo: React.FC<LogoProps> = ({ className = '' }) => {
   return (
     <div className={`flex items-center ${className}`}>
-      <img src='/images/logomm.png' alt="Logo" className="w-auto h-full" />
+      <img src='/images/logo-rmm.png' alt="Logo" className="w-auto h-full" />
     </div>
   );
 };

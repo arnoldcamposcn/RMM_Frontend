@@ -69,7 +69,7 @@ export const ForoCard: React.FC<ForoCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+    <div className="bg-gradient-to-br from-white via-gray-50/30 to-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg hover:border-[#53C1A9]/30 transition-all duration-300 group">
       {/* Header con imagen de perfil y acciones */}
       <div className="p-6 pb-4">
         <div className="flex items-start justify-between mb-4">
@@ -88,26 +88,29 @@ export const ForoCard: React.FC<ForoCardProps> = ({
                   }}
                 />
               ) : null}
-              <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg ${foro.autor.perfil_url ? 'hidden' : ''}`}>
+              <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-[#132F56] to-[#1e3a8a] flex items-center justify-center text-white font-bold text-lg shadow-md ${foro.autor.perfil_url ? 'hidden' : ''}`}>
                 {foro.autor.usuario_unico.charAt(0).toUpperCase()}
               </div>
             </div>
             
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              <h3 className="title-magazine text-xl font-bold text-[#132F56] mb-2 group-hover:text-[#53C1A9] transition-colors duration-300">
                 {foro.titulo}
               </h3>
               
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <span className="font-medium">{foro.autor.usuario_unico}</span>
+              <div className="flex items-center space-x-3 text-sm text-gray-600">
+                <span className="paragraph-magazine font-semibold text-[#132F56]">{foro.autor.usuario_unico}</span>
                 <span>•</span>
-                <span>{formatDate(foro.creado_en)}</span>
-                <span>•</span>
-                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                  {foro.categoria_foro.nombre_categoria}
-                </span>
+                <span className="paragraph-magazine">{formatDate(foro.creado_en)}</span>
               </div>
             </div>
+          </div>
+
+          {/* Badge de categoría en la parte superior derecha */}
+          <div className="ml-4">
+            <span className="bg-gradient-to-r from-slate-500 to-slate-600 text-white text-xs px-3 py-1.5 rounded-full font-semibold">
+              {foro.categoria_foro.nombre_categoria}
+            </span>
           </div>
 
           {/* Acciones del propietario */}
@@ -150,22 +153,22 @@ export const ForoCard: React.FC<ForoCardProps> = ({
         )}
 
         {/* Contenido */}
-        <div className="text-gray-700 mb-4">
+        <div className="paragraph-magazine text-gray-700 mb-4 leading-relaxed">
           <p>{truncateContent(foro.contenido)}</p>
         </div>
       </div>
 
       {/* Footer con acciones */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+      <div className="px-6 py-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white rounded-b-xl">
         <div className="flex items-center justify-between">
           {/* Botones de acción izquierda */}
           <div className="flex items-center space-x-4">
             <button
               onClick={showInlineCommentForm ? handleCancelReply : handleReplyClick}
-              className={`flex items-center space-x-2 text-sm font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                 showInlineCommentForm 
-                  ? 'text-red-600 hover:text-red-700' 
-                  : 'text-gray-600 hover:text-blue-600'
+                  ? 'text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100' 
+                  : 'text-[#132F56] hover:text-blue-600 bg-gray-100 hover:bg-blue-50'
               }`}
             >
               <span>{showInlineCommentForm ? '✕' : '💬'}</span>
@@ -174,13 +177,13 @@ export const ForoCard: React.FC<ForoCardProps> = ({
             
             <button
               onClick={showInlineComments ? handleCloseComments : handleViewCommentsClick}
-              className={`flex items-center space-x-2 text-sm font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                 showInlineComments 
-                  ? 'text-red-600 hover:text-red-700' 
-                  : 'text-gray-600 hover:text-blue-600'
+                  ? 'text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100' 
+                  : 'text-[#132F56] hover:text-slate-600 bg-gray-100 hover:bg-slate-50'
               }`}
             >
-              <span>{showInlineComments ? '✕' : '👁️'}</span>
+              <span>{showInlineComments ? '✕' : '💬'}</span>
               <span>
                 {showInlineComments 
                   ? 'Ocultar respuestas' 
@@ -194,13 +197,13 @@ export const ForoCard: React.FC<ForoCardProps> = ({
           <div className="flex items-center space-x-3">
             <button
               onClick={() => onToggleLike(foro.id)}
-              className={`flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 ${
                 isLiked 
-                  ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-600 hover:from-red-200 hover:to-red-300 border border-red-200' 
+                  : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600 hover:from-blue-50 hover:to-blue-100 hover:text-blue-600 border border-gray-200'
               }`}
             >
-              <span>{isLiked ? '❤️' : '🤍'}</span>
+              <span className="text-lg">{isLiked ? '❤️' : '🤍'}</span>
               <span>{foro.likes_count}</span>
             </button>
           </div>

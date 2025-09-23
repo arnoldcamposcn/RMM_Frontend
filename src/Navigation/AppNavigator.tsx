@@ -16,6 +16,8 @@ import { EditionContainer } from "../components/pages/EditionContainer";
 import ProfilePage from "../components/pages/profile";
 import EditProfilePage from "../components/pages/editProfile";
 import { ForoPage } from "../components/pages/foro";
+import PagePasswordReset from "../components/pages/passwordReset";
+import PageChangePassword from "../components/pages/changePassword";
 
 
 const AppNavigator = () => {
@@ -43,7 +45,9 @@ const AppNavigator = () => {
           <Route path="/contacto" element={<ContactPage />} />
           {/* Páginas de autenticación - sin Header (configurado en MainLayout) */}
           <Route path="/iniciar-sesion" element={<LoginPage />} />
-          <Route path="/registro" element={<RegisterPage />} />
+          <Route path="/registrarse" element={<RegisterPage />} />
+          <Route path="/reset-password" element={<PagePasswordReset />} />
+          <Route path="/reset-password-confirm" element={<PageChangePassword />} />
 
           {/* Agregar más rutas aquí siguiendo el mismo patrón */}
         </Routes>
