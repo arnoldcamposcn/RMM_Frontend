@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import type { Foro } from '../../schema/foro/foro';
 import { ForoInlineCommentForm } from './ForoInlineCommentForm';
 import { ForoInlineComments } from './ForoInlineComments';
+import RequireAuth from '../../hooks/RequireAuth';
+import { useAuthStatus } from '../../hooks/useAuthStatus';
 
 interface ForoCardProps {
   foro: Foro;
@@ -24,6 +26,7 @@ export const ForoCard: React.FC<ForoCardProps> = ({
 }) => {
   const [showInlineCommentForm, setShowInlineCommentForm] = useState(false);
   const [showInlineComments, setShowInlineComments] = useState(false);
+  const { isAuthenticated } = useAuthStatus();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -66,6 +69,14 @@ export const ForoCard: React.FC<ForoCardProps> = ({
 
   const handleCloseComments = () => {
     setShowInlineComments(false);
+  };
+
+  const handleToggleLike = () => {
+    // Solo ejecutar si el usuario está autenticado
+    if (isAuthenticated) {
+      onToggleLike(foro.id);
+    }
+    // Si no está autenticado, no hacer nada (no mostrar error ni advertencia)
   };
 
   return (
@@ -114,6 +125,7 @@ export const ForoCard: React.FC<ForoCardProps> = ({
           </div>
 
           {/* Acciones del propietario */}
+          <RequireAuth>
           {isOwner && (onEdit || onDelete) && (
             <div className="flex items-center space-x-2 ml-4">
               {onEdit && (
@@ -136,21 +148,9 @@ export const ForoCard: React.FC<ForoCardProps> = ({
               )}
             </div>
           )}
+          </RequireAuth>
         </div>
 
-        {/* Imagen del tema */}
-        {foro.imagen && (
-          <div className="mb-4">
-            <img 
-              src={foro.imagen} 
-              alt={foro.titulo}
-              className="w-full h-48 object-cover rounded-md"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </div>
-        )}
 
         {/* Contenido */}
         <div className="paragraph-magazine text-gray-700 mb-4 leading-relaxed">
@@ -163,6 +163,7 @@ export const ForoCard: React.FC<ForoCardProps> = ({
         <div className="flex items-center justify-between">
           {/* Botones de acción izquierda */}
           <div className="flex items-center space-x-4">
+            <RequireAuth> 
             <button
               onClick={showInlineCommentForm ? handleCancelReply : handleReplyClick}
               className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
@@ -174,7 +175,7 @@ export const ForoCard: React.FC<ForoCardProps> = ({
               <span>{showInlineCommentForm ? '✕' : '💬'}</span>
               <span>{showInlineCommentForm ? 'Cancelar' : 'Responder'}</span>
             </button>
-            
+            </RequireAuth>
             <button
               onClick={showInlineComments ? handleCloseComments : handleViewCommentsClick}
               className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
@@ -196,7 +197,7 @@ export const ForoCard: React.FC<ForoCardProps> = ({
           {/* Reacciones en la derecha */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => onToggleLike(foro.id)}
+              onClick={handleToggleLike}
               className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 ${
                 isLiked 
                   ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-600 hover:from-red-200 hover:to-red-300 border border-red-200' 

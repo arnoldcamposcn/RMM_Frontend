@@ -11,7 +11,7 @@ const Breadcrumb: React.FC = () => {
   
   // Separamos la ruta y filtramos elementos vacíos
   const pathnames = location.pathname.split('/').filter((x) => x);
-  const routesWithoutHeader = ['', '/iniciar-sesion', '/registrarse', '/reset-password', '/reset-password-confirm', '/reset-password-confirm/'];
+  const routesWithoutHeader = ['', '/iniciar-sesion', '/registrarse', '/reset-password', '/reset-password-confirm', '/reset-password-confirm/','/admin'];
 
   if(routesWithoutHeader.includes(location.pathname)) {
     return null;

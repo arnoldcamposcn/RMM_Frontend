@@ -18,7 +18,7 @@ import EditProfilePage from "../components/pages/editProfile";
 import { ForoPage } from "../components/pages/foro";
 import PagePasswordReset from "../components/pages/passwordReset";
 import PageChangePassword from "../components/pages/changePassword";
-
+import { Adminpage } from "../components/pages/admin";
 
 const AppNavigator = () => {
   return (
@@ -48,6 +48,7 @@ const AppNavigator = () => {
           <Route path="/registrarse" element={<RegisterPage />} />
           <Route path="/reset-password" element={<PagePasswordReset />} />
           <Route path="/reset-password-confirm" element={<PageChangePassword />} />
+          <Route path= "/admin" element={<Adminpage />} />
 
           {/* Agregar más rutas aquí siguiendo el mismo patrón */}
         </Routes>

@@ -22,7 +22,7 @@ export const ForoEditForm: React.FC<ForoEditFormProps> = ({
   const [formData, setFormData] = useState<Partial<CreateForo>>({
     titulo: foro.titulo,
     contenido: foro.contenido,
-    imagen: foro.imagen || '',
+    // imagen: foro.imagen || '',
     categoria_foro_id: foro.categoria_foro.id
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,21 +114,6 @@ export const ForoEditForm: React.FC<ForoEditFormProps> = ({
           />
         </div>
 
-        {/* Imagen */}
-        <div>
-          <label htmlFor="imagen" className="block text-sm font-medium text-gray-700 mb-1">
-            URL de Imagen (opcional)
-          </label>
-          <input
-            id="imagen"
-            type="url"
-            value={formData.imagen || ''}
-            onChange={(e) => handleChange('imagen', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="https://ejemplo.com/imagen.jpg"
-            disabled={loading || isSubmitting}
-          />
-        </div>
 
         {/* Error */}
         {error && (

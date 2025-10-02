@@ -14,7 +14,7 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
   const [formData, setFormData] = useState<CreateForo>({
     titulo: '',
     contenido: '',
-    imagen: '',
+    // imagen: '',
     categoria_foro_id: categorias[0]?.id || 1
   });
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,7 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
       setFormData({
         titulo: '',
         contenido: '',
-        imagen: '',
+        // imagen: '',
         categoria_foro_id: categorias[0]?.id || 1
       });
     } catch (err) {
@@ -121,22 +121,7 @@ export const ForoForm: React.FC<ForoFormProps> = ({ onForoCreated, categorias, c
           />
         </div>
 
-        {/* Imagen (opcional) */}
-        <div>
-          <label htmlFor="imagen" className="block text-sm font-medium text-gray-700 mb-1">
-            URL de Imagen (opcional)
-          </label>
-          <input
-            id="imagen"
-            type="url"
-            value={formData.imagen}
-            onChange={(e) => handleChange('imagen', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="https://ejemplo.com/imagen.jpg"
-            disabled={loading}
-          />
-        </div>
-
+       
         {/* Error */}
         {error && (
           <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">

@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const navigationItems = [
     { label: 'Inicio', href: '/', isActive: location.pathname === '/' },
     { label: 'Ediciones', href: '/ediciones', isActive: location.pathname === '/ediciones' },
-    { label: 'Blog', href: '/blogs', isActive: location.pathname === '/blog' },
+    { label: 'Noticias', href: '/blogs', isActive: location.pathname === '/blog' },
     { label: 'Artículos', href: '/articulos', isActive: location.pathname === '/articulos' },
     { label: 'Foro', href: '/foro', isActive: location.pathname === '/foro' },
     { label: 'Nosotros', href: '/nosotros', isActive: location.pathname === '/nosotros' },

@@ -132,7 +132,7 @@ export const useForo = () => {
       }));
     } catch (err) {
       setError('Error al actualizar el like');
-      console.error('Error toggling foro like:', err);
+      console.error('clicck desde aquie:', err);
     }
   };
 

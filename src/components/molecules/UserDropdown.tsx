@@ -12,12 +12,12 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ className = '' }) => {
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   
-  // Debug temporal para verificar datos del usuario
-  React.useEffect(() => {
-    if (user) {
-      console.log('Datos del usuario en UserDropdown:', user);
-    }
-  }, [user]);
+  // // Debug temporal para verificar datos del usuario
+  // React.useEffect(() => {
+  //   if (user) {
+  //     console.log('Datos del usuario en UserDropdown:', user);
+  //   }
+  // }, [user]);
 
   // Cerrar dropdown cuando se hace clic fuera
   useEffect(() => {

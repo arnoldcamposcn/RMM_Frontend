@@ -84,8 +84,17 @@ export const BlogLikesResponseSchema = z.object({
   total_likes: z.number(),
 });
 
+export const CreateBlogSchema = z.object({
+  titulo_blog: z.string(),
+  contenido: z.string(),
+  imagen_principal: z.instanceof(File, { message: "Debe ser un archivo válido" }),
+  banner: z.instanceof(File, { message: "Debe ser un archivo válido" }),
+  fecha_publicacion: z.string(),
+});
+
   
   // --- Tipos inferidos ---
+  export type CreateBlog = z.infer<typeof CreateBlogSchema>;
   export type Blog = z.infer<typeof BlogSchema>;
   export type BlogApiResponse = z.infer<typeof BlogApiResponseSchema>;
   export type PostComment = z.infer<typeof PostCommentSchema>;

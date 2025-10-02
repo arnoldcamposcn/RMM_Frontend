@@ -61,6 +61,16 @@ export const ArticleCommentsApiResponseSchema = z.object({
     results: z.array(ArticlePostCommentSchema),
 });
 
+export const ArticleCreateSchema = z.object({
+    titulo_articulo: z.string().min(3, "El título del artículo es requerido"),
+    contenido: z.string().min(10, "El contenido del artículo es requerido"),
+    imagen_principal: z.instanceof(File, { message: "La imagen principal es requerida" }), 
+    banner: z.instanceof(File, { message: "El banner es requerido" }),
+    fecha_publicacion: z.string().min(1, "La fecha de publicación es requerida"),
+    categoria_articulo: z.number(),
+});
+
+
 export type Article = z.infer<typeof ArticleSchema>;
 export type ArticleApiResponse = z.infer<typeof ArticleApiResponseSchema>;
 export type ArticlePostComment = z.infer<typeof ArticlePostCommentSchema>;
@@ -68,3 +78,4 @@ export type ArticleCreateComment = z.infer<typeof ArticleCreateCommentSchema>;
 export type ArticleUpdateComment = z.infer<typeof ArticleUpdateCommentSchema>;
 export type ArticleLikes = z.infer<typeof ArticleLikesSchema>;
 export type ArticleCommentsApiResponse = z.infer<typeof ArticleCommentsApiResponseSchema>;
+export type ArticleCreate = z.infer<typeof ArticleCreateSchema>;
