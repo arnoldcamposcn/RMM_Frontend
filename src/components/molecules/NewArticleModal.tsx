@@ -215,7 +215,7 @@ const NewArticleModal: React.FC<NewArticleModalProps> = ({ isOpen, onClose, onSa
             </div>
 
             {/* Categoría */}
-            <div className="md:col-span-1">
+            {/* <div className="md:col-span-1">
               <label htmlFor="categoria_articulo" className="block text-sm font-medium text-gray-700 mb-2">
                 Categoría *
               </label>
@@ -232,7 +232,7 @@ const NewArticleModal: React.FC<NewArticleModalProps> = ({ isOpen, onClose, onSa
                 <option value={4}>Seguridad</option>
                 <option value={5}>Otros</option>
               </select>
-            </div>
+            </div> */}
 
             {/* Contenido */}
             <div className="md:col-span-2">

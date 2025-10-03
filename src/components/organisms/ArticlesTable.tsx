@@ -15,16 +15,16 @@ interface ArticlesTableProps {
 }
 
 const ArticlesTable: React.FC<ArticlesTableProps> = ({ articles, onEdit, onDelete }) => {
-  const getCategoryName = (categoryId: number): string => {
-    const categories = {
-      1: 'Tecnología',
-      2: 'Innovación',
-      3: 'Sostenibilidad',
-      4: 'Seguridad',
-      5: 'Otros'
-    };
-    return categories[categoryId as keyof typeof categories] || 'Desconocida';
-  };
+  // const getCategoryName = (categoryId: number): string => {
+  //   const categories = {
+  //     1: 'Tecnología',
+  //     2: 'Innovación',
+  //     3: 'Sostenibilidad',
+  //     4: 'Seguridad',
+  //     5: 'Otros'
+  //   };
+  //   return categories[categoryId as keyof typeof categories] || 'Desconocida';
+  // };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -48,9 +48,9 @@ const ArticlesTable: React.FC<ArticlesTableProps> = ({ articles, onEdit, onDelet
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Título del artículo
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Categoría
-              </th>
+              </th> */}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fecha de publicación
               </th>
@@ -93,11 +93,11 @@ const ArticlesTable: React.FC<ArticlesTableProps> = ({ articles, onEdit, onDelet
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                {/* <td className="px-6 py-4 whitespace-nowrap">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     {getCategoryName(article.categoria_articulo)}
                   </span>
-                </td>
+                </td> */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {new Date(article.fecha_publicacion).toLocaleDateString('es-ES', {
                     year: 'numeric',

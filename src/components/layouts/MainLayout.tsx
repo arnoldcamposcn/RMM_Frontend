@@ -42,7 +42,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {shouldShowHeader && (
         <Footer 
           onNewsletterSubscribe={handleNewsletterSubscribe}
-          companyName="Meta Mining"
+          companyName="Revista Meta Mining"
           description="Revista especializada en minería: tu fuente confiable de noticias, análisis y tendencias en minería moderna."
         />
       )}
