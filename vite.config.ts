@@ -5,7 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   
-  // 🛑 Añadir esta sección para permitir el acceso desde el subdominio 🛑
   server: {
     // Si estás usando Docker, es una buena práctica forzar el host
     host: '0.0.0.0', 
