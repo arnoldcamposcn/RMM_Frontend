@@ -178,3 +178,4 @@ export const ForoInlineComments: React.FC<ForoInlineCommentsProps> = ({
     </div>
   );
 };
+
