@@ -9,3 +9,4 @@ export { default as UserDropdown } from './UserDropdown';
 export { default as Breadcrumb } from './Breadcrumb';
 export { default as MonthlyEditionCard } from './MonthlyEditionCard';
 export { ForoCard } from './ForoCard';
+export { ForoInlineComments } from './ForoInlineComments';

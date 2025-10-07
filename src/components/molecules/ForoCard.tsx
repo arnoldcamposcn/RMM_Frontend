@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import type { Foro } from '../../schema/foro/foro';
-import { ForoInlineCommentForm } from '../comments/molecules/ForoInlineCommentForm';
+import { ForoInlineCommentForm } from './ForoInlineCommentForm';
 import { ForoInlineComments } from './ForoInlineComments';
-
-
-
-
 import RequireAuth from '../../hooks/RequireAuth';
 import { useAuthStatus } from '../../hooks/useAuthStatus';
 
