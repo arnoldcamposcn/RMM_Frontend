@@ -1,81 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import type { ComentarioForo } from '../../schema/foro/foro';
-import { Avatar } from '../comments/atoms/Avatar';
-import { Button } from '../comments/atoms/Button';
+import React from 'react';
+import { useForoComments } from '../comments/hooks/useForoComments';
+import { ForoCommentThread } from '../comments/organisms/ForoCommentThread';
 import { LoadingSpinner } from '../comments/atoms/LoadingSpinner';
+import { ErrorMessage } from '../comments/atoms/ErrorMessage';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 interface ForoInlineCommentsProps {
   temaId: number;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export const ForoInlineComments: React.FC<ForoInlineCommentsProps> = ({
   temaId,
   onClose
 }) => {
-  const [comments, setComments] = useState<ComentarioForo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    comments,
+    loading,
+    error,
+    commentLikes,
+    commentState,
+    loadComments,
+    createComment,
+    updateComment,
+    deleteComment,
+    toggleCommentLike,
+    startEdit,
+    cancelEdit,
+    startReply,
+    cancelReply
+  } = useForoComments(temaId);
 
-  useEffect(() => {
-    loadComments();
-  }, [temaId]);
+  const { isOwner } = useCurrentUser();
 
-  const loadComments = async () => {
+  // Cargar comentarios cuando se monta el componente
+  React.useEffect(() => {
+    if (temaId) {
+      loadComments();
+    }
+  }, [temaId, loadComments]);
+
+  const handleEdit = async (commentId: number, content: string) => {
     try {
-      setLoading(true);
-      setError(null);
-      
-      // Aquí deberías hacer la llamada a la API para cargar los comentarios
-      // Por ahora simulamos la operación
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Datos simulados - reemplazar con llamada real a la API
-      setComments([]);
-    } catch (err) {
-      setError('Error al cargar los comentarios');
-      console.error('Error loading comments:', err);
-    } finally {
-      setLoading(false);
+      await updateComment(commentId, content);
+    } catch (error) {
+      console.error('Error updating comment:', error);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const handleDelete = async (commentId: number) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este comentario?')) {
+      try {
+        await deleteComment(commentId);
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+      }
+    }
   };
 
-  const handleToggleLike = (commentId: number) => {
-    // Implementar lógica de like
-    console.log('Toggle like for comment:', commentId);
+  const handleReply = async (parentId: number, content: string) => {
+    try {
+      await createComment(content, parentId);
+    } catch (error) {
+      console.error('Error creating reply:', error);
+    }
   };
 
-  const handleReply = (commentId: number) => {
-    // Implementar lógica de respuesta
-    console.log('Reply to comment:', commentId);
-  };
-
-  if (loading) {
+  if (loading && comments.length === 0) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-semibold text-gray-700">
-            Comentarios
-          </h4>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            ✕
-          </button>
-        </div>
-        <div className="flex justify-center py-4">
-          <LoadingSpinner size="small" />
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-0 rounded-t-none">
+        <div className="p-4">
+          <div className="flex justify-center py-4">
+            <LoadingSpinner size="medium" />
+          </div>
         </div>
       </div>
     );
@@ -83,99 +80,86 @@ export const ForoInlineComments: React.FC<ForoInlineCommentsProps> = ({
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-semibold text-gray-700">
-            Comentarios
-          </h4>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            ✕
-          </button>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-0 rounded-t-none">
+        <div className="p-4">
+          <ErrorMessage message={error} />
         </div>
-        <div className="text-center py-4">
-          <p className="text-red-600 text-sm">{error}</p>
-          <button
-            onClick={loadComments}
-            className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-          >
-            Reintentar
-          </button>
+      </div>
+    );
+  }
+
+  if (comments.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-0 rounded-t-none">
+        <div className="p-4 border-b border-gray-100 bg-gray-50">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium text-gray-700">
+              Comentarios (0)
+            </h4>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                title="Cerrar comentarios"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="text-center py-4">
+            <div className="text-gray-400 text-2xl mb-2">💭</div>
+            <p className="text-gray-600 text-sm">No hay comentarios aún</p>
+            <p className="text-gray-500 text-xs">Sé el primero en comentar</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-semibold text-gray-700">
-          Comentarios ({comments.length})
-        </h4>
-        <button
-          onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          ✕
-        </button>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-0 rounded-t-none">
+      {/* Header */}
+      <div className="p-4 border-b border-gray-100 bg-gray-50">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-medium text-gray-700">
+            Comentarios ({comments.length})
+          </h4>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              title="Cerrar comentarios"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {comments.length === 0 ? (
-          <div className="text-center py-6 text-gray-500">
-            <p className="text-sm">No hay comentarios aún.</p>
-            <p className="text-xs mt-1">¡Sé el primero en comentar!</p>
+      {/* Lista de comentarios */}
+      <div className="max-h-96 overflow-y-auto">
+        {comments.map((comment) => (
+          <div key={comment.id} className="border-b border-gray-100 last:border-b-0">
+            <ForoCommentThread
+              comment={comment}
+              commentLikes={commentLikes}
+              commentState={commentState}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onReply={handleReply}
+              onToggleLike={toggleCommentLike}
+              onStartEdit={startEdit}
+              onCancelEdit={cancelEdit}
+              onStartReply={startReply}
+              onCancelReply={cancelReply}
+              isCurrentUserAuthor={isOwner}
+              loading={loading}
+            />
           </div>
-        ) : (
-          comments.map((comment) => (
-            <div key={comment.id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
-              <div className="flex items-start space-x-3">
-                <Avatar
-                  src={comment.autor.perfil_url}
-                  alt={comment.autor.usuario_unico}
-                  fallback={comment.autor.usuario_unico.charAt(0).toUpperCase()}
-                  size="small"
-                />
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <span className="text-sm font-semibold text-gray-900">
-                      {comment.autor.usuario_unico}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {formatDate(comment.creado_en)}
-                    </span>
-                  </div>
-                  
-                  <p className="text-sm text-gray-700 mb-2 leading-relaxed">
-                    {comment.contenido}
-                  </p>
-                  
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => handleToggleLike(comment.id)}
-                      className="flex items-center space-x-1 text-xs text-gray-500 hover:text-red-600 transition-colors"
-                    >
-                      <span>🤍</span>
-                      <span>{comment.likes_count}</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => handleReply(comment.id)}
-                      className="text-xs text-gray-500 hover:text-blue-600 transition-colors"
-                    >
-                      Responder
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
+        ))}
       </div>
     </div>
   );
 };
-
