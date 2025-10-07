@@ -4,6 +4,7 @@ import { Avatar } from '../atoms/Avatar';
 import { Button } from '../atoms/Button';
 import { TextArea } from '../atoms/TextArea';
 import { LoadingSpinner } from '../atoms/LoadingSpinner';
+import RequireAuth from '../../../hooks/RequireAuth';
 
 interface ForoCommentThreadProps {
   comment: ComentarioForo;
@@ -113,6 +114,7 @@ export const ForoCommentThread: React.FC<ForoCommentThreadProps> = ({
           </div>
 
           {/* Acciones del comentario */}
+          <RequireAuth>
           {isAuthor && (
             <div className="flex items-center space-x-2">
                <Button
@@ -133,6 +135,7 @@ export const ForoCommentThread: React.FC<ForoCommentThreadProps> = ({
                </Button>
             </div>
           )}
+          </RequireAuth>
         </div>
 
         {/* Contenido del comentario */}
@@ -185,6 +188,7 @@ export const ForoCommentThread: React.FC<ForoCommentThreadProps> = ({
               <span>{likesCount}</span>
             </button>
 
+             <RequireAuth>
              {/* Reply button */}
              <Button
                variant="secondary"
@@ -194,6 +198,7 @@ export const ForoCommentThread: React.FC<ForoCommentThreadProps> = ({
              >
                Responder
              </Button>
+             </RequireAuth>
           </div>
         </div>
 

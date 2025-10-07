@@ -1,5 +1,5 @@
 import { apiClient } from "../Instance";
-import { type Blog, type BlogApiResponse, type CreateComment, type PostComment, type PostCommentApiResponse, type BlogLikesResponse } from "../../schema/blog/blog";
+import { type Blog, type BlogApiResponse, type CreateComment, type PostComment, type PostCommentApiResponse, type BlogLikesResponse, type CreateBlog, type UpdateBlog } from "../../schema/blog/blog";
 import { type Article } from "../../schema/article/article";
 
 // --- Blogs ---
@@ -7,6 +7,51 @@ export const getBlogs = async (): Promise<Blog[]> => {
   const response = await apiClient.get<BlogApiResponse>("/blog/blogs/");
   return response.results;
 };
+
+export const getBlogsPaginated = async (page: number = 1, page_size: number = 6): Promise<BlogApiResponse> => {
+  const response = await apiClient.get<BlogApiResponse>(`/blog/blogs/?page=${page}&page_size=${page_size}`);
+  return response;
+};
+
+
+
+export const createBlog = async (blog: CreateBlog): Promise<Blog> => {
+  const response = await apiClient.post<Blog>("/blog/blogs/", blog, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response;
+};
+
+
+export const patchBlog = async (id: number, blog: UpdateBlog): Promise<Blog> => {
+  const response = await apiClient.patch<Blog>(`/blog/blogs/${id}/`, blog, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response;
+};
+
+
+export const deleteBlog = async (id: number): Promise<void> => {
+  const response = await apiClient.delete<void>(`/blog/blogs/${id}/`);
+  return response;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+// --------------------------------
 
 // --- Blog por id ---
 export const getBlog = async (id: number): Promise<Blog> => {
@@ -75,6 +120,57 @@ export const getBlogLikes = async (id: number): Promise<BlogLikesResponse> => {
   const response = await apiClient.get<BlogLikesResponse>(`/blog/blogs/${id}/likes_list/`);
   return response;
 };
+
+
+// --- Gestión de Artículos en Blogs ---
+// export interface ManageArticulosRequest {
+//   action: 'add' | 'remove' | 'set' | 'clear';
+//   articulos_ids?: number[];
+// }
+
+
+// export interface ManageArticulosResponse {
+//   message: string;
+//   blog: Blog;
+//   articulos_count: number;
+// }
+
+
+// export const manageBlogArticulos = async (
+//   blogId: number, 
+//   request: ManageArticulosRequest
+// ): Promise<ManageArticulosResponse> => {
+//   const response = await apiClient.post<ManageArticulosResponse>(
+//     `/blog/blogs/${blogId}/manage_articulos/`, 
+//     request
+//   );
+//   return response;
+// };
+
+
+// --- Gestión de Artículos para Interfaz Admin ---
+// export interface ArticulosManagementResponse {
+//   blog: {
+//     id: number;
+//     titulo_blog: string;
+//   };
+//   articulos_disponibles: any[];
+//   articulos_elegidos: any[];
+//   counts: {
+//     disponibles: number;
+//     elegidos: number;
+//   };
+// }
+
+
+// export const getBlogArticulosManagement = async (
+//   blogId: number
+// ): Promise<ArticulosManagementResponse> => {
+//   const response = await apiClient.get<ArticulosManagementResponse>(
+//     `/blog/blogs/${blogId}/articulos_management/`
+//   );
+//   return response;
+// };
 
 
 

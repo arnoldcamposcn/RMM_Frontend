@@ -3,6 +3,8 @@ import Logo from '../atoms/Logo';
 import SocialLinks, { type SocialLink } from '../molecules/SocialLinks';
 import FooterNavigationColumn, { type NavigationLink } from '../molecules/FooterNavigationColumn';
 import FooterNewsletterSection from '../molecules/FooterNewsletterSection';
+
+
 import FooterLegalSection, { type LegalLink } from '../molecules/FooterLegalSection';
 
 interface FooterProps {
