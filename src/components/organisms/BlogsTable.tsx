@@ -56,7 +56,7 @@ const BlogsTable: React.FC<BlogsTableProps> = ({ blogs, onEdit, onDelete }) => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="w-16 h-16 flex-shrink-0">
+                  {/* <div className="w-16 h-16 flex-shrink-0">
                     <img
                       src={blog.imagen_principal}
                       alt={blog.titulo_blog}
@@ -66,7 +66,7 @@ const BlogsTable: React.FC<BlogsTableProps> = ({ blogs, onEdit, onDelete }) => {
                         target.src = 'https://via.placeholder.com/64x64?text=No+Image';
                       }}
                     />
-                  </div>
+                  </div> */}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{blog.titulo_blog}</div>

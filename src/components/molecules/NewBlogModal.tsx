@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import type { CreateBlog } from '../../schema/blog/blog';
+import type { Blog } from '../../schema/blog/blog';
+import type { Article } from '../../schema/article/article';
+import { getArticles } from '../../services/articles/article.service';
+import { getBlog } from '../../services/blog/blog.service';
+import { RelatedArticlesTags } from './RelatedArticlesTags';
+import { AvailableArticlesToAdd } from './AvailableArticlesToAdd';
 
 interface EditingBlog {
   id: number;
@@ -13,7 +19,7 @@ interface EditingBlog {
 interface NewBlogModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (blog: CreateBlog | FormData) => void;
+  onSave: (blog: CreateBlog) => void;
   editingBlog?: EditingBlog | null;
 }
 
@@ -21,40 +27,82 @@ const NewBlogModal: React.FC<NewBlogModalProps> = ({ isOpen, onClose, onSave, ed
   const [formData, setFormData] = useState<CreateBlog>({
     titulo_blog: '',
     contenido: '',
-    imagen_principal: null as any, // Inicializar como null, se convertirá a File
-    banner: null as any, // Inicializar como null, se convertirá a File
+    imagen_principal: '',
+    banner: '',
     fecha_publicacion: '',
+    articulos_ids: [],
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // Estados para manejo de artículos
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
+  const [loadingArticles, setLoadingArticles] = useState(false);
+
+  // Cargar artículos cuando se abre el modal
+  useEffect(() => {
+    const loadArticles = async () => {
+      if (isOpen) {
+        setLoadingArticles(true);
+        try {
+          const articlesData = await getArticles();
+          setArticles(articlesData);
+        } catch (error) {
+          console.error('Error al cargar artículos:', error);
+          setError('Error al cargar artículos');
+        } finally {
+          setLoadingArticles(false);
+        }
+      }
+    };
+
+    loadArticles();
+  }, [isOpen]);
 
   // Precargar datos cuando se está editando
   useEffect(() => {
-    if (isOpen && editingBlog) {
-      setFormData({
-        titulo_blog: editingBlog.titulo_blog,
-        contenido: editingBlog.contenido,
-        imagen_principal: null as any, // En edición, no cargamos archivo existente
-        banner: null as any, // En edición, no cargamos archivo existente
-        fecha_publicacion: editingBlog.fecha_publicacion
-      });
-      setImagePreview(editingBlog.imagen_principal); // Mostrar imagen existente como preview
-      setBannerPreview(editingBlog.banner); // Mostrar banner existente como preview
-    } else if (isOpen && !editingBlog) {
-      // Limpiar formulario para nueva noticia
-      setFormData({
-        titulo_blog: '',
-        contenido: '',
-        imagen_principal: null as any,
-        banner: null as any,
-        fecha_publicacion: ''
-      });
-      setImagePreview(null);
-      setBannerPreview(null);
-    }
+    const loadBlogData = async () => {
+      if (isOpen && editingBlog) {
+        try {
+          // Cargar el blog completo con sus artículos relacionados
+          const blogData = await getBlog(editingBlog.id);
+          setRelatedArticles(blogData.articulos || []);
+          
+          setFormData({
+            titulo_blog: editingBlog.titulo_blog,
+            contenido: editingBlog.contenido,
+            imagen_principal: editingBlog.imagen_principal,
+            banner: editingBlog.banner,
+            fecha_publicacion: editingBlog.fecha_publicacion,
+            articulos_ids: blogData.articulos?.map(art => art.id) || []
+          });
+          setImagePreview(editingBlog.imagen_principal);
+          setBannerPreview(editingBlog.banner);
+        } catch (error) {
+          console.error('Error al cargar blog:', error);
+          setError('Error al cargar datos del blog');
+        }
+      } else if (isOpen && !editingBlog) {
+        // Limpiar formulario para nueva noticia
+        setFormData({
+          titulo_blog: '',
+          contenido: '',
+          imagen_principal: '',
+          banner: '',
+          fecha_publicacion: '',
+          articulos_ids: []
+        });
+        setImagePreview(null);
+        setBannerPreview(null);
+        setRelatedArticles([]);
+      }
+    };
+
+    loadBlogData();
   }, [isOpen, editingBlog]);
 
   if (!isOpen) return null;
@@ -69,37 +117,39 @@ const NewBlogModal: React.FC<NewBlogModalProps> = ({ isOpen, onClose, onSave, ed
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData(prev => ({
-        ...prev,
-        imagen_principal: file
-      }));
-
-      // Crear preview de la imagen
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      imagen_principal: value
+    }));
+    setImagePreview(value);
   };
 
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData(prev => ({
-        ...prev,
-        banner: file
-      }));
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      banner: value
+    }));
+    setBannerPreview(value);
+  };
 
-      // Crear preview del banner
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setBannerPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  // Función para agregar un artículo al blog
+  const handleAddArticleToBlog = (article: Article) => {
+    setFormData(prev => ({
+      ...prev,
+      articulos_ids: [...(prev.articulos_ids || []), article.id]
+    }));
+    setRelatedArticles(prev => [...prev, article]);
+  };
+
+  // Función para remover un artículo del blog
+  const handleRemoveArticleFromBlog = (articleId: number) => {
+    setFormData(prev => ({
+      ...prev,
+      articulos_ids: (prev.articulos_ids || []).filter(id => id !== articleId)
+    }));
+    setRelatedArticles(prev => prev.filter(art => art.id !== articleId));
   };
 
 
@@ -124,14 +174,17 @@ const NewBlogModal: React.FC<NewBlogModalProps> = ({ isOpen, onClose, onSave, ed
     setFormData({
       titulo_blog: '',
       contenido: '',
-      imagen_principal: null as any,
-      banner: null as any,
-      fecha_publicacion: ''
+      imagen_principal: '',
+      banner: '',
+      fecha_publicacion: '',
+      articulos_ids: []
     });
     setIsSubmitting(false);
     setImagePreview(null);
     setBannerPreview(null);
     setError(null);
+    setArticles([]);
+    setRelatedArticles([]);
     onClose();
   };
 
@@ -247,18 +300,19 @@ const NewBlogModal: React.FC<NewBlogModalProps> = ({ isOpen, onClose, onSave, ed
             {/* Imagen principal */}
             <div className="md:col-span-1">
               <label htmlFor="imagen_principal" className="block text-sm font-medium text-gray-700 mb-2">
-                Imagen principal *
+                URL Imagen principal *
               </label>
               <input
-                type="file"
+                type="url"
                 id="imagen_principal"
                 name="imagen_principal"
+                value={formData.imagen_principal}
                 onChange={handleImageChange}
-                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="https://ejemplo.com/imagen.jpg"
               />
               <p className="mt-1 text-xs text-gray-500">
-                Formatos: JPG, PNG, GIF, WebP
+                URL completa de la imagen
               </p>
               
               {/* Preview de la imagen principal */}
@@ -276,18 +330,19 @@ const NewBlogModal: React.FC<NewBlogModalProps> = ({ isOpen, onClose, onSave, ed
             {/* Banner */}
             <div className="md:col-span-1">
               <label htmlFor="banner" className="block text-sm font-medium text-gray-700 mb-2">
-                Banner *
+                URL Banner *
               </label>
               <input
-                type="file"
+                type="url"
                 id="banner"
                 name="banner"
+                value={formData.banner}
                 onChange={handleBannerChange}
-                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="https://ejemplo.com/banner.jpg"
               />
               <p className="mt-1 text-xs text-gray-500">
-                Formatos: JPG, PNG, GIF, WebP
+                URL completa del banner
               </p>
               
               {/* Preview del banner */}
@@ -299,6 +354,49 @@ const NewBlogModal: React.FC<NewBlogModalProps> = ({ isOpen, onClose, onSave, ed
                     className="w-full h-32 object-cover rounded-md border border-gray-200"
                   />
                 </div>
+              )}
+            </div>
+          </div>
+
+          {/* Sección de Artículos */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="mb-4">
+              <h4 className="text-lg font-medium text-gray-900 mb-2">
+                Artículos Relacionados
+              </h4>
+              <p className="text-sm text-gray-600">
+                Selecciona los artículos que quieres asociar con este blog
+              </p>
+            </div>
+
+            {/* Artículos Relacionados */}
+            <div className="mb-6">
+              <h5 className="text-md font-medium text-gray-700 mb-3">
+                Artículos Asociados ({relatedArticles.length})
+              </h5>
+              <RelatedArticlesTags
+                blog={{ articulos: relatedArticles } as Blog}
+                onRemoveArticle={handleRemoveArticleFromBlog}
+                isEditing={true}
+              />
+            </div>
+
+            {/* Artículos Disponibles */}
+            <div>
+              <h5 className="text-md font-medium text-gray-700 mb-3">
+                Artículos Disponibles para Agregar
+              </h5>
+              {loadingArticles ? (
+                <div className="text-center py-4">
+                  <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                  <p className="text-sm text-gray-500 mt-2">Cargando artículos...</p>
+                </div>
+              ) : (
+                <AvailableArticlesToAdd
+                  articles={articles}
+                  blog={{ articulos: relatedArticles }}
+                  onAddArticle={handleAddArticleToBlog}
+                />
               )}
             </div>
           </div>

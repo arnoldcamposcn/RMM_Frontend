@@ -276,28 +276,22 @@ export const Adminpage = () => {
   };
 
   const handleSaveNewBlog = async (blogData: CreateBlog) => {
-    // Crear FormData para envío de archivos
-    const formData = new FormData();
-    formData.append('titulo_blog', blogData.titulo_blog);
-    formData.append('contenido', blogData.contenido);
-    formData.append('fecha_publicacion', blogData.fecha_publicacion);
-    
-    // Solo agregar archivos si son nuevos
-    if (blogData.imagen_principal instanceof File) {
-      formData.append('imagen_principal', blogData.imagen_principal);
-    }
-    if (blogData.banner instanceof File) {
-      formData.append('banner', blogData.banner);
-    }
-    
     try {
       if (blogToEdit) {
         // Actualizar blog existente usando el servicio patchBlog
-        await patchBlog(blogToEdit.id, formData as any);
+        const updateData = {
+          titulo_blog: blogData.titulo_blog,
+          contenido: blogData.contenido,
+          imagen_principal: blogData.imagen_principal,
+          banner: blogData.banner,
+          fecha_publicacion: blogData.fecha_publicacion,
+          articulos_ids: blogData.articulos_ids || []
+        };
+        await patchBlog(blogToEdit.id, updateData);
         showSuccess(`✅ Noticia actualizada exitosamente: "${blogData.titulo_blog}"`);
       } else {
         // Crear nuevo blog usando el servicio
-        await createBlog(formData as any);
+        await createBlog(blogData);
         showSuccess(`✅ Nueva noticia creada exitosamente: "${blogData.titulo_blog}"`);
       }
       

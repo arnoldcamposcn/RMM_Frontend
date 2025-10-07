@@ -6,6 +6,12 @@ export const getArticles = async (): Promise<Article[]> => {
     return response.results;
   };
 
+// Función para buscar artículos por título
+export const searchArticles = async (searchTerm: string): Promise<Article[]> => {
+    const response = await apiClient.get<ArticleApiResponse>(`/articles/articulos/?search=${encodeURIComponent(searchTerm)}`);
+    return response.results;
+  };
+
   export const getArticlesPaginated = async (page: number = 1, page_size: number = 6): Promise<ArticleApiResponse> => {
     const response = await apiClient.get<ArticleApiResponse>(`/articles/articulos/?page=${page}&page_size=${page_size}`);
     return response;

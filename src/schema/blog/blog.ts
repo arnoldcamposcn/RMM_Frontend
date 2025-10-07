@@ -7,8 +7,20 @@ export const BlogSchema = z.object({
     imagen_principal: z.string(),
     banner: z.string(),
     fecha_publicacion: z.string(),
+    comentarios: z.array(z.any()).optional(),
     likes_count: z.number().optional(),
     is_liked: z.boolean().optional(),
+    articulos_ids: z.array(z.number()).optional(),
+    articulos: z.array(z.object({
+        id: z.number(),
+        titulo_articulo: z.string(),
+        contenido: z.string(),
+        imagen_principal: z.string(),
+        banner: z.string(),
+        fecha_publicacion: z.string(),
+        comentarios: z.array(z.any()).optional(),
+        likes_count: z.number().optional(),
+    })).optional(),
 });
 
 // Schema para la respuesta paginada de blogs
@@ -87,14 +99,26 @@ export const BlogLikesResponseSchema = z.object({
 export const CreateBlogSchema = z.object({
   titulo_blog: z.string(),
   contenido: z.string(),
-  imagen_principal: z.instanceof(File, { message: "Debe ser un archivo válido" }),
-  banner: z.instanceof(File, { message: "Debe ser un archivo válido" }),
+  imagen_principal: z.string(),
+  banner: z.string(),
   fecha_publicacion: z.string(),
+  articulos_ids: z.array(z.number()).optional(),
+});
+
+// Schema para actualizar blog (todos los campos opcionales)
+export const UpdateBlogSchema = z.object({
+  titulo_blog: z.string().optional(),
+  contenido: z.string().optional(),
+  imagen_principal: z.string().optional(),
+  banner: z.string().optional(),
+  fecha_publicacion: z.string().optional(),
+  articulos_ids: z.array(z.number()).optional(),
 });
 
   
   // --- Tipos inferidos ---
   export type CreateBlog = z.infer<typeof CreateBlogSchema>;
+  export type UpdateBlog = z.infer<typeof UpdateBlogSchema>;
   export type Blog = z.infer<typeof BlogSchema>;
   export type BlogApiResponse = z.infer<typeof BlogApiResponseSchema>;
   export type PostComment = z.infer<typeof PostCommentSchema>;
